@@ -7,13 +7,21 @@ class HighSchool(Document):
     street = StringField(required=True)
     suburb = StringField(required=True)
     postcode = IntField(required=True)
-    attendance_rates = DictField(required=True)
+    students = IntField(required=True)
+    selective = StringField(required=True)
+    gender = StringField(required=True)
+    attendance_rates = DictField()
+    selective_entry_scores = DictField()
 
-    def __init__(self, id, name, street, suburb, postcode, attendance_rates, *args, **kwargs):
+    def __init__(self, id, name, street, suburb, postcode, students, selective, gender, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.id = id
         self.name = name
         self.street = street
         self.suburb = suburb
         self.postcode = postcode
-        self.attendance_rates = attendance_rates
+        self.students = students
+        self.selective = selective
+        self.gender = gender
+        self.attendance_rates = {}
+        self.selective_entry_scores = {}
