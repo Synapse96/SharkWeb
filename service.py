@@ -39,7 +39,7 @@ def filter_schools():
         for schools in HighSchool.objects(gender=gender):
             response.append(dict(schools.to_mongo()))
     else:
-        response['error'] = "invalid arguments in request"
+        response.append({"error": "invalid arguments in request"})
 
     return jsonify(response), 200
 
