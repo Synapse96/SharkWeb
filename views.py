@@ -1,4 +1,5 @@
 from flask import Flask
+from mongoengine import connect
 
 app = Flask(__name__)
 
@@ -16,4 +17,5 @@ def profile(name):
 
 
 if __name__ == '__main__':
+    connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
     app.run()

@@ -12,6 +12,7 @@ class HighSchool(Document):
     gender = StringField(required=True)
     attendance_rates = DictField()
     selective_entry_scores = DictField()
+    enrollments = DictField()
 
     def __init__(self, id, name, street, suburb, postcode, students, selective, gender, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,3 +26,4 @@ class HighSchool(Document):
         self.gender = gender
         self.attendance_rates = {}
         self.selective_entry_scores = {}
+        self.enrollments = {}

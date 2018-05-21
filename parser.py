@@ -2,10 +2,6 @@ from models import HighSchool
 from mongoengine import connect
 import csv
 
-connect(
-    host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb'
-)
-
 
 def parse_government_schools():
     with open('static/NSW-Public-Schools-Master-Dataset-07032017.csv') as csvfile:
@@ -51,12 +47,26 @@ def parse_selective_entry_scores():
             name = name.replace(")", "")
             for school in HighSchool.objects(name=name):
                 entry_scores = {}
-                for i in range (0, 4):
+                for i in range(0, 4):
                     entry_scores[str(2015 + i)] = row[i + 1]
                 school.update(selective_entry_scores=entry_scores)
 
 
+def parse_enrolments():
+    with open('static/secondary-enrolments-by-school-2014-2018.csv') as csvfile:
+        connect('high_school')
+        rows = csv.reader(csvfile, delimiter=",")
+        enrollments = {}
+        for row in rows:
+            if row[0] != '' and row[0] != "School Code" and "Student Enrolments" not in row[0] \
+                    and "Opened" not in row[0]:
+                school = HighSchool.objects(id=row[0])
+                if school is not None:
+                    for i in range(0, 4):
+                        enrollments[str(2014 + i)] = row[i + 3]
+                    print(enrollments)
+                    school.update(enrollments=enrollments)
+
+
 if __name__ == '__main__':
-    parse_government_schools()
-    parse_attendance_rates()
-    parse_selective_entry_scores()
+    connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
