@@ -20,9 +20,9 @@ def get_attendance_rate(id, from_year=2011, to_year=2017):
 def get_enrolments(id, from_year=2014, to_year=2018):
     connect('high_school')
     school = HighSchool.objects(id=id)
-    enrolments = []
+    enrollments = []
     if school is not None and from_year >= 2014 and to_year <= 2018:
-        rates = school.enrolments.values()
+        enrollments = school[0].enrollments.values()
         if from_year > 2014 or to_year < 2018:
-            rates = rates[from_year - 2015:to_year - 2015]
-    return enrolments
+            enrollments = enrollments[from_year - 2015:to_year - 2015]
+    return enrollments

@@ -64,9 +64,9 @@ def parse_enrolments():
                 if school is not None:
                     for i in range(0, 4):
                         enrollments[str(2014 + i)] = row[i + 3]
-                    print(enrollments)
                     school.update(enrollments=enrollments)
 
 
 if __name__ == '__main__':
     connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
+    parse_enrolments()
