@@ -24,6 +24,3 @@ class HighSchool(Document):
         self.students = students
         self.selective = selective
         self.gender = gender
-        self.attendance_rates = {}
-        self.selective_entry_scores = {}
-        self.enrollments = {}
