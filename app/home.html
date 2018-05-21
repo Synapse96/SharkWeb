@@ -1,28 +1,249 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <title>COMP 9321</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+var map;
+var markers = [];
+var lastinfowindow;
+var locIndex;
+
+//Polyfill function Credit: MDN
+if ( !Array.prototype.forEach ) {
+  Array.prototype.forEach = function(fn, scope) {
+    for(var i = 0, len = this.length; i < len; ++i) {
+      fn.call(scope, this[i], i, this);
+    }
+  }
+}
+
+/*
+Temporary data array
+*/
+var data = [
+    {
+        address:'457 Liverpool Road, Strathfield NSW 2135',
+        title:'Strathfield South Public school',
+        type:'gov'
+    },
+
+    {
+        address:'116 Albert Rd, Strathfield NSW 2135',
+        title:'Strathfield Girls High School',
+        type:'nongov'
+    },
+
+    {
+        address:'Francis St, Strathfield NSW 2135',
+        title:'St Patrick\'s College Strathfield',
+        type:'nongov'
+    },
+
+    {
+        address:'Bridge Rd, Homebush NSW 2140',
+        title:'Homebush Boys High School',
+        type:'gov'
+    }
+];
+
+//function getIcon(type) {
+//	switch(type) {
+//		case "pharmacy": return "icons/img?.png";
+//		case "hospital": return "icons/todogetimg.png";
+//	}
+//}
+
+function initialize() {
+	var latlng = new google.maps.LatLng(-33.8724445,151.0916209);
+	var myOptions = {
+		zoom: 14,
+		center: latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+
+	geocoder = new google.maps.Geocoder();
+
+	data.forEach(function(mapData,idx) {
+		geocoder.geocode( { 'address': mapData.address}, function(results, status) {
+				if (status == google.maps.GeocoderStatus.OK) {
+					var marker = new google.maps.Marker({
+						map: map,
+						position: results[0].geometry.location,
+						title: mapData.title,
+						//icon: getIcon(mapData.type)
+					});
+					var contentHtml = "<div style='width:300px;height:200px'><h3>"+mapData.title+"</h3>"+mapData.address+"<br>Specific link for school page</div>";
+					var infowindow = new google.maps.InfoWindow({
+		    			content: contentHtml
+					});
+					google.maps.event.addListener(marker, 'click', function() {
+					  infowindow.open(map,marker);
+					});
+					marker.locid = idx+1;
+					marker.infowindow = infowindow;
+					markers[markers.length] = marker;
+
+					var sideHtml = '<p class="loc" data-locid="'+marker.locid+'"><b>'+mapData.title+'</b><br/>';
+						 sideHtml += mapData.address + '</p>';
+						 $("#locs").append(sideHtml);
+
+					//todo
+					if(markers.length == data.length) doFilter();
+
+				} else {
+					//alert("Geocode was not successful for the following reason: " + status);
+				}
+			});
+
+	});
+
+	$(document).on("click",".loc",function() {
+		var thisloc = $(this).data("locid");
+		for(var i=0; i<markers.length; i++) {
+			if(markers[i].locid == thisloc) {
+				//get the latlong
+				if(lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
+				map.panTo(markers[i].getPosition());
+				markers[i].infowindow.open(map, markers[i]);
+				lastinfowindow = markers[i].infowindow;
+			}
+		}
+	});
+
+	/*
+	Filter function (add more to taste)
+	*/
+
+	function doFilter() {
+		if(!locIndex) {
+			locIndex = {};
+			//I reverse index markers to figure out the position of loc to marker index
+			for(var x=0, len=markers.length; x<len; x++) {
+				locIndex[markers[x].locid] = x;
+			}
+		}
+
+		//what's checked?
+		var checked = $("input[type=checkbox]:checked");
+		var selTypes = [];
+		for(var i=0, len=checked.length; i<len; i++) {
+			selTypes.push($(checked[i]).val());
+		}
+		for(var i=0, len=data.length; i<len; i++) {
+			var sideDom = "p.loc[data-locid="+(i+1)+"]";
+
+			//Only hide if length != 0
+			if(checked.length !=0 && selTypes.indexOf(data[i].type) < 0) {
+				$(sideDom).hide();
+				markers[locIndex[i+1]].setVisible(false);
+			} else {
+				$(sideDom).show();
+				markers[locIndex[i+1]].setVisible(true);
+			}
+		}
+	}
+
+	$(document).on("click", "input[type=checkbox]", doFilter);
+
+}
+
+</script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" crossorigin="anonymous"
+          href="http://meta-kage.kakaocdn.net/dn/osa/blog/assets/fonts/Kakao.css"/>
+<style>
+    html, body{
+          height: 100%;
+        font-family: 'Kakao';
+    }
+#map_canvas {
+	position: relative; /* Will be set by the Maps API anyway */
+  height: calc(100vh - 56px);/*56px: Nav bar height*/
+    width:100%;
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-4">
-        <h1>List Area</h1>
+}
+    
+    .maparea{
+        height: 100%;
+
+    }
+#locs {
+	margin-top: 0px;
+	padding-top: 0px;
+	margin-left: 10px;
+	height: 500px;
+	overflow-y: scroll;
+}
+.loc {
+	border-style:solid;
+	border-width:thin;
+	width: 300px;
+	padding: 5px;
+	cursor:pointer;
+	margin-top:0px;
+}
+#form {
+	margin-top: 0px;
+	padding-top: 0px;
+	margin-left: 10px;
+	height: 60px;
+}
+label {
+	width: 200px;
+	padding: 5px;
+}
+
+    .gap{
+        height:30px;
+    }
+
+</style>
+</head>
+<body onLoad="initialize()">
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+  <a class="navbar-brand" href="#">SharkWeb</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Potential Feat1</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Potential Feat2</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="container">
+            <div class="gap"></div>
+            <p>Check on all that apply. no checks will result every item available</p>
+            <div id="form">
+<span class="label"><input type="checkbox" name="Government" value="gov" />Government Schools</span>
+<span class="label"><input type="checkbox" name="Non-Government" value="nongov" />Non-Government Schools</span>
     </div>
-    <div class="col-lg-8">
-        <h1>Map Area</h1>
+        <div id="locs"></div>
+</div>
     </div>
+    <div class="col-sm-8 maparea">
+        <div id="map_canvas">map area</div>
     </div>
-   
 </div>
 
+
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y&callback=initializeu">
+    </script>
 </body>
 </html>
