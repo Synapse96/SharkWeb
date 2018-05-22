@@ -1,0 +1,216 @@
+
+*{
+    box-sizing: border-box;
+}
+
+html,body {
+    height: 100%;
+    font-family: 'Kakao';
+}
+
+#map_canvas {
+    position: relative;
+    /* Will be set by the Maps API anyway */
+    height: 100vh;
+    /*56px: Nav bar height*/
+    width: 100%;
+
+}
+
+.maparea {
+    height: 100%;
+
+}
+
+#filterlist{
+    padding-right:20px;
+    border:thin solid #e2e9f4;
+box-shadow: 4px 3px 5px 1px #CCC;
+    background-color: #f7f8fb;
+}
+
+#locs {
+    margin-top: 30px;
+    padding-top: 0px;
+/*    margin-left: 10px;*/
+    height: calc(70vh);
+    overflow-y: scroll;
+/*    border: 1px solid red;*/
+    /*DEBUG USE*/
+}
+
+.loc {
+    border-style: solid;
+    border-color: #EEE;
+    border-width: thin;
+    width: 100%;
+    padding: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    cursor: pointer;
+    margin-top: 0px;
+    box-shadow: 4px 3px 5px 1px #CCC;
+    font-size:12px;
+}
+
+#form {
+    margin-top: 0px;
+    padding-top: 0px;
+    margin-left: 10px;
+    height: 60px;
+}
+
+label {
+    width: 200px;
+    padding: 5px;
+}
+
+.gap {
+    height: 30px;
+}
+
+nav {
+    box-shadow: 0 3px 10px 1px #CCC;
+
+}
+.sidebar{
+     height:100vh;
+     overflow-y: scroll;
+     padding-right: 0;
+}
+.filtercat{
+    font-weight:bold;
+}
+
+/*Search bar*/
+form.search input[type=text] {
+    padding: 10px;
+    font-size: 17px;
+    border: 1px solid #7e9fd1;
+    float: left;
+    width: 80%;
+    background: #FFFFFF;
+}
+
+form.search button {
+    float: left;
+    width: 20%;
+    padding: 10px;
+    background: #7e9fd1;
+    color: white;
+    font-size: 17px;
+    border: 1px solid #7e9fd1;
+    border-left: none;
+    cursor: pointer;
+}
+
+form.search button:hover {
+    background: #427CD1;
+}
+
+form.search::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/*Slider*/
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #427CD1;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #427CD1;
+    cursor: pointer;
+}
+
+/*Custom Checkboxes for interface*/
+/* The container */
+.filters {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+/*    font-size: 22px;*/
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.filters input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #c9ccd1;
+    border: thin solid #7e9fd1;
+
+}
+
+/* On mouse-over, add a grey background color */
+.filters:hover input ~ .checkmark {
+    background-color: #7e9fd1;
+}
+
+/* When the checkbox is checked, add a blue background */
+.filters input:checked ~ .checkmark {
+    background-color: white;
+    border: thin solid #427CD1;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.filters input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.filters .checkmark:after {
+    left: 8px;
+    top: 3px;
+    width: 7px;
+    height: 14px;
+    border: solid #427CD1;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}

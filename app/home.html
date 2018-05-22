@@ -1,249 +1,273 @@
-
 <!DOCTYPE html>
 <html>
+
 <head>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script type="text/javascript">
-var map;
-var markers = [];
-var lastinfowindow;
-var locIndex;
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        var map;
+        var markers = [];
+        var lastinfowindow;
+        var locIndex;
 
-//Polyfill function Credit: MDN
-if ( !Array.prototype.forEach ) {
-  Array.prototype.forEach = function(fn, scope) {
-    for(var i = 0, len = this.length; i < len; ++i) {
-      fn.call(scope, this[i], i, this);
-    }
-  }
-}
+        //Polyfill function Credit: MDN
+        if (!Array.prototype.forEach) {
+            Array.prototype.forEach = function(fn, scope) {
+                for (var i = 0, len = this.length; i < len; ++i) {
+                    fn.call(scope, this[i], i, this);
+                }
+            }
+        }
 
-/*
-Temporary data array
-*/
-var data = [
-    {
-        address:'457 Liverpool Road, Strathfield NSW 2135',
-        title:'Strathfield South Public school',
-        type:'gov'
-    },
+        /*
+        Temporary data array
+        */
+        var data = [{
+                address: '457 Liverpool Road, Strathfield NSW 2135',
+                title: 'Strathfield South Public school',
+                type: 'gov'
+            },
 
-    {
-        address:'116 Albert Rd, Strathfield NSW 2135',
-        title:'Strathfield Girls High School',
-        type:'nongov'
-    },
+            {
+                address: '116 Albert Rd, Strathfield NSW 2135',
+                title: 'Strathfield Girls High School',
+                type: 'nongov'
+            },
 
-    {
-        address:'Francis St, Strathfield NSW 2135',
-        title:'St Patrick\'s College Strathfield',
-        type:'nongov'
-    },
+            {
+                address: 'Francis St, Strathfield NSW 2135',
+                title: 'St Patrick\'s College Strathfield',
+                type: 'nongov'
+            },
 
-    {
-        address:'Bridge Rd, Homebush NSW 2140',
-        title:'Homebush Boys High School',
-        type:'gov'
-    }
-];
+            {
+                address: 'Bridge Rd, Homebush NSW 2140',
+                title: 'Homebush Boys High School',
+                type: 'gov'
+            }
+        ];
 
-//function getIcon(type) {
-//	switch(type) {
-//		case "pharmacy": return "icons/img?.png";
-//		case "hospital": return "icons/todogetimg.png";
-//	}
-//}
+        function getIcon(type) {
+            return "resources/logo_xs.png"
+        }
 
-function initialize() {
-	var latlng = new google.maps.LatLng(-33.8724445,151.0916209);
-	var myOptions = {
-		zoom: 14,
-		center: latlng,
-		mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
-	map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+        function initialize() {
+            var latlng = new google.maps.LatLng(-33.8724445, 151.0916209);
+            var myOptions = {
+                zoom: 14,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
-	geocoder = new google.maps.Geocoder();
+            geocoder = new google.maps.Geocoder();
 
-	data.forEach(function(mapData,idx) {
-		geocoder.geocode( { 'address': mapData.address}, function(results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					var marker = new google.maps.Marker({
-						map: map,
-						position: results[0].geometry.location,
-						title: mapData.title,
-						//icon: getIcon(mapData.type)
-					});
-					var contentHtml = "<div style='width:300px;height:200px'><h3>"+mapData.title+"</h3>"+mapData.address+"<br>Specific link for school page</div>";
-					var infowindow = new google.maps.InfoWindow({
-		    			content: contentHtml
-					});
-					google.maps.event.addListener(marker, 'click', function() {
-					  infowindow.open(map,marker);
-					});
-					marker.locid = idx+1;
-					marker.infowindow = infowindow;
-					markers[markers.length] = marker;
+            data.forEach(function(mapData, idx) {
+                geocoder.geocode({
+                    'address': mapData.address
+                }, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var marker = new google.maps.Marker({
+                            map: map,
+                            position: results[0].geometry.location,
+                            title: mapData.title,
+                            icon: getIcon(mapData.type)
+                        });
+                        var contentHtml = "<div style='width:300px;height:200px'><h3>" + mapData.title + "</h3>" + mapData.address + "<br>Specific link for school page</div>";
+                        var infowindow = new google.maps.InfoWindow({
+                            content: contentHtml
+                        });
+                        google.maps.event.addListener(marker, 'click', function() {
+                            infowindow.open(map, marker);
+                        });
+                        marker.locid = idx + 1;
+                        marker.infowindow = infowindow;
+                        markers[markers.length] = marker;
 
-					var sideHtml = '<p class="loc" data-locid="'+marker.locid+'"><b>'+mapData.title+'</b><br/>';
-						 sideHtml += mapData.address + '</p>';
-						 $("#locs").append(sideHtml);
+                        var sideHtml = '<p class="loc card" data-locid="' + marker.locid + '"><b>' + mapData.title + '</b>';
+                        sideHtml += mapData.address + '</p>';
+                        $("#locs").append(sideHtml);
 
-					//todo
-					if(markers.length == data.length) doFilter();
+                        //todo
+                        if (markers.length == data.length) doFilter();
 
-				} else {
-					//alert("Geocode was not successful for the following reason: " + status);
-				}
-			});
+                    } else {
+                        //alert("Geocode was not successful for the following reason: " + status);
+                    }
+                });
 
-	});
+            });
 
-	$(document).on("click",".loc",function() {
-		var thisloc = $(this).data("locid");
-		for(var i=0; i<markers.length; i++) {
-			if(markers[i].locid == thisloc) {
-				//get the latlong
-				if(lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
-				map.panTo(markers[i].getPosition());
-				markers[i].infowindow.open(map, markers[i]);
-				lastinfowindow = markers[i].infowindow;
-			}
-		}
-	});
+            $(document).on("click", ".loc", function() {
+                var thisloc = $(this).data("locid");
+                for (var i = 0; i < markers.length; i++) {
+                    if (markers[i].locid == thisloc) {
+                        //get the latlong
+                        if (lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
+                        map.panTo(markers[i].getPosition());
+                        markers[i].infowindow.open(map, markers[i]);
+                        lastinfowindow = markers[i].infowindow;
+                    }
+                }
+            });
 
-	/*
-	Filter function (add more to taste)
-	*/
+            /*
+            Filter function (add more to taste)
+            */
 
-	function doFilter() {
-		if(!locIndex) {
-			locIndex = {};
-			//I reverse index markers to figure out the position of loc to marker index
-			for(var x=0, len=markers.length; x<len; x++) {
-				locIndex[markers[x].locid] = x;
-			}
-		}
+            function doFilter() {
+                if (!locIndex) {
+                    locIndex = {};
+                    //I reverse index markers to figure out the position of loc to marker index
+                    for (var x = 0, len = markers.length; x < len; x++) {
+                        locIndex[markers[x].locid] = x;
+                    }
+                }
 
-		//what's checked?
-		var checked = $("input[type=checkbox]:checked");
-		var selTypes = [];
-		for(var i=0, len=checked.length; i<len; i++) {
-			selTypes.push($(checked[i]).val());
-		}
-		for(var i=0, len=data.length; i<len; i++) {
-			var sideDom = "p.loc[data-locid="+(i+1)+"]";
+                //what's checked?
+                var checked = $("input[type=checkbox]:checked");
+                var selTypes = [];
+                for (var i = 0, len = checked.length; i < len; i++) {
+                    selTypes.push($(checked[i]).val());
+                }
+                for (var i = 0, len = data.length; i < len; i++) {
+                    var sideDom = "p.loc[data-locid=" + (i + 1) + "]";
 
-			//Only hide if length != 0
-			if(checked.length !=0 && selTypes.indexOf(data[i].type) < 0) {
-				$(sideDom).hide();
-				markers[locIndex[i+1]].setVisible(false);
-			} else {
-				$(sideDom).show();
-				markers[locIndex[i+1]].setVisible(true);
-			}
-		}
-	}
+                    //Only hide if length != 0
+                    if (checked.length != 0 && selTypes.indexOf(data[i].type) < 0) {
+                        $(sideDom).hide();
+                        markers[locIndex[i + 1]].setVisible(false);
+                    } else {
+                        $(sideDom).show();
+                        markers[locIndex[i + 1]].setVisible(true);
+                    }
+                }
+            }
 
-	$(document).on("click", "input[type=checkbox]", doFilter);
+            $(document).on("click", "input[type=checkbox]", doFilter);
 
-}
+        }
 
-</script>
+    </script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" crossorigin="anonymous"
-          href="http://meta-kage.kakaocdn.net/dn/osa/blog/assets/fonts/Kakao.css"/>
-<style>
-    html, body{
-          height: 100%;
-        font-family: 'Kakao';
-    }
-#map_canvas {
-	position: relative; /* Will be set by the Maps API anyway */
-  height: calc(100vh - 56px);/*56px: Nav bar height*/
-    width:100%;
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" crossorigin="anonymous" href="http://meta-kage.kakaocdn.net/dn/osa/blog/assets/fonts/Kakao.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/style.css" />
 
-}
-    
-    .maparea{
-        height: 100%;
-
-    }
-#locs {
-	margin-top: 0px;
-	padding-top: 0px;
-	margin-left: 10px;
-	height: 500px;
-	overflow-y: scroll;
-}
-.loc {
-	border-style:solid;
-	border-width:thin;
-	width: 300px;
-	padding: 5px;
-	cursor:pointer;
-	margin-top:0px;
-}
-#form {
-	margin-top: 0px;
-	padding-top: 0px;
-	margin-left: 10px;
-	height: 60px;
-}
-label {
-	width: 200px;
-	padding: 5px;
-}
-
-    .gap{
-        height:30px;
-    }
-
-</style>
 </head>
+
 <body onLoad="initialize()">
-<nav class="navbar navbar-expand-md bg-dark navbar-dark">
-  <a class="navbar-brand" href="#">SharkWeb</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+
+    <div class="row">
+        <div class="col-sm-4 sidebar">
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <a class="navbar-brand" href="#"><img src="/resources/logo_sm.png" width="50px"/> SharkWeb</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
     <span class="navbar-toggler-icon"></span>
   </button>
-  <div class="collapse navbar-collapse" id="collapsibleNavbar">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Potential Feat1</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Potential Feat2</a>
-      </li>
-    </ul>
-  </div>
-</nav>
-<div class="row">
-    <div class="col-sm-4">
-        <div class="container">
-            <div class="gap"></div>
-            <p>Check on all that apply. no checks will result every item available</p>
-            <div id="form">
-<span class="label"><input type="checkbox" name="Government" value="gov" />Government Schools</span>
-<span class="label"><input type="checkbox" name="Non-Government" value="nongov" />Non-Government Schools</span>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Home</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="gap"></div>
+
+                <!-- TODO: Search bar integration -->
+                <form class="search" action="/action_page.php">
+                    <input type="text" placeholder="Search..." name="search">
+                    <button type="button"><i class="fa fa-search"></i></button>
+                </form>
+                <!--filter components-->
+                <div class="gap"></div>
+                <!--                <h2>Filters</h2>-->
+                <div id="filterlist" class="collapse" style="margin-bottom: 20px;">
+                    <p style="font-size:12px;  padding:15px; color: #7e9fd1">Check on all that apply. no checks will result every item available.</p>
+                    <div id="form" style="display: inline-block;
+   width: 100%;">
+                        <div class="government">
+                            <div class="filtercat">Government</div>
+                            <label class="filters">
+                            <span class="label"><input type="checkbox" name="Government" value="gov" />
+                                  <span class="checkmark"></span> Government Schools</span>
+                            </label>
+                            <label class="filters">
+                                <span class="label"><input type="checkbox" name="Non-Government" value="nongov" />
+                                  <span class="checkmark"></span> Non-Government Schools</span>
+                            </label>
+                        </div>
+                        <div class="slidecontainer">
+                            <div class="filtercat">School Size</div>
+                            <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="schoolSize">
+                            <p><span id="schoolSizeVal">Val:</span></p>
+                        </div>
+                        <div class="slidecontainer">
+                            <div class="filtercat">Attendance Rate</div>
+                            <input type="range" min="80" max="100" value="0" class="slider" id="attendance">
+                            <p><span id="attendanceVal">Val:</span>%</p>
+                        </div>
+                        <div class="slidecontainer">
+                            <div class="filtercat">Minimum Selective School score</div>
+                            <input type="range" min="0" max="300" value="200" step="5" class="slider" id="selective">
+                            <p><span id="selectiveVal">Val:</span></p>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary btn-block">apply</button>
+                        <div class="gap">&ensp;</div>
+
+                    </div>
+                </div>
+
+                <!--Filter button TODO: Style-->
+                <button type="button" class="btn btn-outline-info btn-block" data-toggle="collapse" data-target="#filterlist">Edit Filters</button>
+
+                <!--Location list-->
+                <div id="locs"></div>
+            </div>
+        </div>
+        <div class="col-sm-8 maparea" style="padding-left:0">
+            <div id="map_canvas">map area</div>
+        </div>
     </div>
-        <div id="locs"></div>
-</div>
-    </div>
-    <div class="col-sm-8 maparea">
-        <div id="map_canvas">map area</div>
-    </div>
-</div>
 
 
-<script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y&callback=initializeu">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y&callback=initializeu">
+
+
+    </script>
+    <script>
+        var schoolSizeslider = document.getElementById("schoolSize");
+        var schoolSizeoutput = document.getElementById("schoolSizeVal");
+        schoolSizeoutput.innerHTML = schoolSizeslider.value; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        schoolSizeslider.oninput = function() {
+            schoolSizeoutput.innerHTML = this.value;
+        }
+
+        var attendanceslider = document.getElementById("attendance");
+        var attendanceoutput = document.getElementById("attendanceVal");
+        attendanceoutput.innerHTML = attendanceslider.value; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        attendanceslider.oninput = function() {
+            attendanceoutput.innerHTML = this.value;
+        }
+
+        var selectiveslider = document.getElementById("selective");
+        var selectiveoutput = document.getElementById("selectiveVal");
+        selectiveoutput.innerHTML = selectiveslider.value; // Display the default slider value
+
+        // Update the current slider value (each time you drag the slider handle)
+        selectiveslider.oninput = function() {
+            selectiveoutput.innerHTML = this.value;
+        }
+
     </script>
 </body>
+
 </html>
