@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+<title>SchoolCompare</title>
+
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -72,11 +74,14 @@
                             title: mapData.title,
                             icon: getIcon(mapData.type)
                         });
-                        var contentHtml = "<div style='width:300px;height:200px'><h3>" + mapData.title + "</h3>" + mapData.address + "<br>Specific link for school page</div>";
+                        var contentHtml = "<div style='width:300px;height:200px'><h5>" + mapData.title + "</h5>" + mapData.address + "<br>Specific link for school page</div>";
                         var infowindow = new google.maps.InfoWindow({
                             content: contentHtml
                         });
                         google.maps.event.addListener(marker, 'click', function() {
+                            for (var i = 0; i < markers.length; i++) {  
+                              markers[i].infowindow.close();
+                            }
                             infowindow.open(map, marker);
                         });
                         marker.locid = idx + 1;
@@ -102,7 +107,9 @@
                 for (var i = 0; i < markers.length; i++) {
                     if (markers[i].locid == thisloc) {
                         //get the latlong
-                        if (lastinfowindow instanceof google.maps.InfoWindow) lastinfowindow.close();
+                        if (lastinfowindow instanceof google.maps.InfoWindow) {
+                            lastinfowindow.close();
+                        }
                         map.panTo(markers[i].getPosition());
                         markers[i].infowindow.open(map, markers[i]);
                         lastinfowindow = markers[i].infowindow;
@@ -158,12 +165,12 @@
 
 </head>
 
-<body onLoad="initialize()">
-
+<!--<body onLoad="initialize()">-->
+<body>
     <div class="row">
         <div class="col-sm-4 sidebar">
             <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-                <a class="navbar-brand" href="#"><img src="/resources/logo_sm.png" width="50px"/> SharkWeb</a>
+                <a class="navbar-brand" href="#"><img src="/resources/logo_sm.png" width="50px"/> SchoolCompare</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -235,7 +242,7 @@
     </div>
 
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y&callback=initializeu">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y&callback=initialize">
 
 
     </script>
