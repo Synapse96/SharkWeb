@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 from flask import Flask, jsonify, request, Response
-=======
-from flask import Flask, jsonify, request
 from flask_cors import CORS
->>>>>>> 71fb5310d15c5af5419a6e54d32a0896d1133396
 from mongoengine import connect
 from models import HighSchool
 
@@ -20,8 +16,9 @@ def get_school_profile(id):
     response = []
     connect('high_school')
     if not HighSchool.objects(id=id):
-        response['error'] = "invalid id in request"
-        return jsonify(response), 400
+        response = "invalid id in request"
+        ret = Response(response)
+        return after_request(ret), 400
     else:
         for school in HighSchool.objects(id=id):
             response.append(school.to_json())

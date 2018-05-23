@@ -26,14 +26,15 @@
         var data = [{
                 address: '457 Liverpool Road, Strathfield NSW 2135',
                 title: 'Strathfield South Public school',
-                type: 'gov'
+                type: 'gov',
+
             },
 
-            {
-                address: '116 Albert Rd, Strathfield NSW 2135',
-                title: 'Strathfield Girls High School',
-                type: 'nongov'
-            },
+//            {
+//                address: '116 Albert Rd, Strathfield NSW 2135',
+//                "title": 'Strathfield Girls High School',
+//                type: 'nongov'
+//            },
 
             {
                 address: 'Francis St, Strathfield NSW 2135',
@@ -45,6 +46,31 @@
                 address: 'Bridge Rd, Homebush NSW 2140',
                 title: 'Homebush Boys High School',
                 type: 'gov'
+            },
+            {
+                "_id": 8169,
+                "title": "Strathfield Girls High School",
+                "address": '116 Albert Rd, Strathfield NSW 2135',
+                "postcode": 2135,
+                "students": 1149,
+                "selective": "Not Selective",
+                "gender": "Girls",
+                "attendance_rates": {
+                    "2012": "95.5",
+                    "2014": "97",
+                    "2017": "96.4",
+                    "2015": "96.2",
+                    "2016": "96.3",
+                    "2011": "95.3",
+                    "2013": "96.6"
+                },
+                "selective_entry_scores": {},
+                "enrollments": {
+                    "2016": "1129.656",
+                    "2015": "1129.555",
+                    "2014": "1118.896",
+                    "2017": "1062.416"
+                }
             }
         ];
 
@@ -74,13 +100,13 @@
                             title: mapData.title,
                             icon: getIcon(mapData.type)
                         });
-                        var contentHtml = "<div style='width:300px;height:200px'><h5>" + mapData.title + "</h5>" + mapData.address + "<br>Specific link for school page</div>";
+                        var contentHtml = "<div style='width:300px;height:200px'><h5>" + mapData.title + "</h5>" + mapData.address + "<br><a href='\/profile.html?id="+mapData._id +"'>Details</a></div>";
                         var infowindow = new google.maps.InfoWindow({
                             content: contentHtml
                         });
                         google.maps.event.addListener(marker, 'click', function() {
-                            for (var i = 0; i < markers.length; i++) {  
-                              markers[i].infowindow.close();
+                            for (var i = 0; i < markers.length; i++) {
+                                markers[i].infowindow.close();
                             }
                             infowindow.open(map, marker);
                         });
@@ -166,6 +192,7 @@
 </head>
 
 <!--<body onLoad="initialize()">-->
+
 <body>
     <div class="row">
         <div class="col-sm-4 sidebar">
