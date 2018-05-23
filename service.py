@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 from flask import Flask, jsonify, request, Response
+=======
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+>>>>>>> 71fb5310d15c5af5419a6e54d32a0896d1133396
 from mongoengine import connect
 from models import HighSchool
 
 app = Flask(__name__)
+CORS(app)
 
 connect(
     host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb'
