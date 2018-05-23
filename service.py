@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from mongoengine import connect
 from models import HighSchool
 
@@ -11,15 +11,16 @@ connect(
 
 @app.route("/school/<id>", methods=['GET'])
 def get_school_profile(id):
-    response = {}
+    response = []
     connect('high_school')
     if not HighSchool.objects(id=id):
         response['error'] = "invalid id in request"
         return jsonify(response), 400
     else:
         for school in HighSchool.objects(id=id):
-            response = dict(school.to_mongo())
-            return jsonify(response), 200
+            response.append(school.to_json())
+            ret = Response(response)
+            return after_request(ret), 200
 
 
 @app.route("/school", methods=['GET'])
@@ -43,6 +44,14 @@ def filter_schools():
 
     return jsonify(response), 200
 
+#Add CORS header on response header
+@app.after_request
+def after_request(response):
+  response.headers['Access-Control-Allow-Origin'] = '*'
+  response.headers.add('Access-Control-Allow-Headers', '*')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  response.headers.add('Access-Control-Allow-Credentials', 'true')
+  return response
 
 if __name__ == '__main__':
     app.run()
