@@ -1,0 +1,34 @@
+<html>
+<script>
+    let schoolid = new URLSearchParams(document.location.search).get("id")
+
+    fetch("http://127.0.0.1:5000/school/" + schoolid) // Call the fetch function passing the url of the API as a parameter
+        //jsonify response body
+        .then((resp) => resp.json())
+        //data = response json
+        .then(function(data) {
+            // Your code for handling the data you get from the API
+            //    let result = data.results;
+            console.log(data)
+            const tgt = document.getElementById('here');
+        
+            tgt.innerHTML = JSON.stringify(data,null,4);
+
+        })
+        .catch(function(error) {
+            alert(error);
+        });
+
+    function createNode(element) {
+        return document.createElement(element); // Create the type of element you pass in the parameters
+    }
+
+    function append(parent, el) {
+        return parent.appendChild(el); // Append the second parameter(element) to the first one
+    }
+
+</script>
+<h1>Detail Profile Page</h1>
+<div id="here">INFO AREA</div>
+
+</html>
