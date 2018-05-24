@@ -19,7 +19,9 @@ def get_average_attendance(id):
         return jsonify(response), 400
     else:
         for school in HighSchool.objects(id=id):
-            attendance = map(int, school.attendance.values())
+            attendance = map(float, school.attendance.values())
+            avg = sum(attendance)/len(attendance)
+    return jsonify({'Avg_attendance': avg}), 200
 
 
 if __name__ == '__main__':

@@ -3,6 +3,9 @@ from mongoengine import connect
 import csv
 
 
+connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
+
+
 def parse_government_schools():
     with open('static/NSW-Public-Schools-Master-Dataset-07032017.csv') as csvfile:
         rows = csv.reader(csvfile, delimiter=",")
@@ -65,8 +68,3 @@ def parse_enrolments():
                     for i in range(0, 4):
                         enrollments[str(2014 + i)] = row[i + 3]
                     school.update(enrollments=enrollments)
-
-
-if __name__ == '__main__':
-    connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
-    parse_enrolments()
