@@ -18,7 +18,7 @@ def get_nearby_schools():
     radius = float(request.args.get("radius"))
     connect('high_school')
     # get all schools within the radius given
-    schools = HighSchool.objects(loc__geo_within_sphere=[(float(lat), float(long)), radius/6371])
+    schools = HighSchool.objects(loc__geo_within_sphere=[(float(long), float(lat)), radius/6371])
     locations = []
     for school in schools:
         loc_dict = school.loc
