@@ -22,7 +22,7 @@ def get_nearby_schools():
     locations = []
     for school in schools:
         loc_dict = school.loc
-        loc_dict['id': school.id]
+        loc_dict['id'] = school.id
         locations.append(loc_dict)
 
     return locations, 200
