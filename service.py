@@ -13,18 +13,27 @@ connect(
 
 @app.route("/nearby", methods=['GET'])
 def get_nearby_schools():
+    # TODO: filter by attendance rate and min_selective
     lat = request.args.get("lat")
     long = request.args.get("long")
     radius = float(request.args.get("radius"))
+    school_size = request.args.get("school_size")
+    min_selective = request.args.get("min_selective_score")
+    attendance_rate = request.args.get("attendance_rate")
     connect('high_school')
     # get all schools within the radius given
-    schools = HighSchool.objects(loc__geo_within_sphere=[(float(long), float(lat)), radius/6371])
+    schools = HighSchool.objects(loc__geo_within_sphere=[(float(long), float(lat)), radius/6371],
+                                 students__gte=int(school_size))
     locations = []
     for school in schools:
         loc_dict = school.loc
         loc_dict['id'] = school.id
         locations.append(loc_dict)
-    resp = jsonify(locations)
+    if len(locations) < 10:
+        resp = jsonify(locations)
+    else:
+        resp = jsonify(locations[0:10])
+
     return after_request(resp), 200
 
 
