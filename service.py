@@ -11,6 +11,23 @@ connect(
 )
 
 
+@app.route("/nearby", methods=['GET'])
+def get_nearby_schools():
+    lat = request.args.get("lat")
+    long = request.args.get("long")
+    radius = float(request.args.get("radius"))
+    connect('high_school')
+    # get all schools within the radius given
+    schools = HighSchool.objects(loc__geo_within_sphere=[(long, lat), radius/6371])
+    locations = []
+    for school in schools:
+        loc_dict = school.loc
+        loc_dict['id': school.id]
+        locations.append(loc_dict)
+
+    return locations, 200
+
+
 @app.route("/school/<id>", methods=['GET'])
 def get_school_profile(id):
     response = []
@@ -47,14 +64,16 @@ def filter_schools():
 
     return jsonify(response), 200
 
-#Add CORS header on response header
+
+# Add CORS header on response header
 @app.after_request
 def after_request(response):
-  response.headers['Access-Control-Allow-Origin'] = '*'
-  response.headers.add('Access-Control-Allow-Headers', '*')
-  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-  response.headers.add('Access-Control-Allow-Credentials', 'true')
-  return response
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
+
 
 if __name__ == '__main__':
     app.run()

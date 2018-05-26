@@ -10,11 +10,12 @@ class HighSchool(Document):
     students = IntField(required=True)
     selective = StringField(required=True)
     gender = StringField(required=True)
+    loc = DictField(required=True)
     attendance_rates = DictField()
     selective_entry_scores = DictField()
     enrollments = DictField()
 
-    def __init__(self, id, name, street, suburb, postcode, students, selective, gender, *args, **kwargs):
+    def __init__(self, id, name, street, suburb, postcode, students, selective, gender, loc, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.id = id
         self.name = name
@@ -24,3 +25,4 @@ class HighSchool(Document):
         self.students = students
         self.selective = selective
         self.gender = gender
+        self.loc = loc

@@ -1,7 +1,7 @@
 from models import HighSchool
 from mongoengine import connect
 import csv
-
+from math import cos, sin, atan2, sqrt, radians
 
 connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
 
@@ -12,18 +12,22 @@ def parse_government_schools():
         connect('high_school')
         for row in rows:
             if "Secondary" in row[10] or "Central" in row[10]:
-                if not HighSchool.objects(id=row[0]):
-                    if row[6] == '':
-                        row[6] = 0
-                    school = HighSchool(id=row[0],
-                                        name=row[2],
-                                        street=row[3],
-                                        suburb=row[4],
-                                        postcode=row[5],
-                                        students=int(float(row[6])),
-                                        selective=row[11],
-                                        gender=row[19])
-                    school.save()
+                print(row)
+                if row[6] == '':
+                    row[6] = 0
+                if row[34] == '' or row[35] == '':
+                    row[34] = "0.0"
+                    row[35] = "0.0"
+                school = HighSchool(id=row[0],
+                                    name=row[2],
+                                    street=row[3],
+                                    suburb=row[4],
+                                    postcode=row[5],
+                                    students=int(float(row[6])),
+                                    selective=row[11],
+                                    gender=row[19],
+                                    loc={'long': float(row[35]), 'lat': float(row[34])})
+                school.save()
 
 
 def parse_attendance_rates():
@@ -68,3 +72,7 @@ def parse_enrolments():
                     for i in range(0, 4):
                         enrollments[str(2014 + i)] = row[i + 3]
                     school.update(enrollments=enrollments)
+
+
+if __name__ == '__main__':
+    connect('high_school')
