@@ -28,12 +28,13 @@ def get_photos(id):
                               place_id + '&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y'
                 with urllib.request.urlopen(url_details) as details_json:
                     details_data = json.load(details_json)
-                    for photo in details_data["result"]["photos"]:
-                        photo_reference = photo["photo_reference"]
-                        url_photo = 'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + \
-                                    photo_reference + '&sensor=false&maxheight=1600&maxwidth=1600' \
-                                                      '&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y'
-                        response.append(url_photo)
+                    if 'photos' in details_data["result"]:
+                        for photo in details_data["result"]["photos"]:
+                            photo_reference = photo["photo_reference"]
+                            url_photo = 'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + \
+                                        photo_reference + '&sensor=false&maxheight=1600&maxwidth=1600' \
+                                                          '&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y'
+                            response.append(url_photo)
 
             return jsonify(response), 200
 
