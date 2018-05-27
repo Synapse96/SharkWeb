@@ -1,7 +1,6 @@
 from models import HighSchool
 from mongoengine import connect
 import csv
-from math import cos, sin, atan2, sqrt, radians
 
 connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
 
@@ -76,3 +75,4 @@ def parse_enrolments():
 
 if __name__ == '__main__':
     connect('high_school')
+    parse_selective_entry_scores()

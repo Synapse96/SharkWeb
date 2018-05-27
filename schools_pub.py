@@ -22,18 +22,22 @@ def get_nearby_schools():
     min_selective = request.args.get("min_selective_score")
     min_attendance = request.args.get("attendance_rate")
     genders = request.args.getlist("gender")
-    print(genders)
+    category = request.args.getlist("category")
     connect('high_school')
     # get all schools within the radius given
     schools = HighSchool.objects(loc__geo_within_sphere=[(float(long), float(lat)), radius/6371],
-                                 students__gte=int(school_size), gender__in=genders)
+                                 students__gte=int(school_size), gender__in=genders, selective__in=category)
 
     locations = []
     for school in schools:
         attendance = school.attendance_rates.get('2017')
-        if 'na' in attendance or float(attendance) < float(min_attendance):
+        if attendance == 'na' or float(attendance) < float(min_attendance):
             continue
-        print(school.name, school.gender, school.students)
+        selective_score = school.selective_entry_scores.get('2018')
+        if school.selective != 'Not Selective' and (
+                'na' in selective_score or float(selective_score) < float(min_selective)):
+            continue
+        print(school.name, school.gender, school.students, school.selective_entry_scores)
         loc_dict = school.loc
         loc_dict['id'] = school.id
         locations.append(loc_dict)
