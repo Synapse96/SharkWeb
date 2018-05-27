@@ -1,8 +1,10 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from mongoengine import connect
+import requests
 import urllib.request
 import urllib.error
 import json
+import json.decoder
 
 app = Flask(__name__)
 
@@ -11,15 +13,21 @@ connect(
 )
 
 
-@app.route('/')
-def index():
-    # TODO: return high school locations for map or search bar from database of NSW High Schools
-    return 'Hello World!'
-
-
-@app.route('/profile/<id>')
-def profile(id):
+@app.route('/get', methods=['GET'])
+def get_data():
     response = {}
+    payload = request.args
+    data = requests.get('http://127.0.0.1:5001/nearby', params=payload)
+    try:
+        response = data.json()
+        return jsonify(response), 200
+    except json.decoder.JSONDecodeError:
+        response["error"] = "invalid arguments in request"
+        return jsonify(response), 400
+
+
+@app.route('/profile/<id>', methods=['GET'])
+def get_profile(id):
     url_school = 'http://127.0.0.1:5001/school/' + id
     url_photos = 'http://127.0.0.1:5002/photos/' + id
     try:
