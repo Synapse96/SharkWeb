@@ -41,6 +41,21 @@ def get_average_enrollments(sid):
     return jsonify({'avg_enrollments': int(avg)}), 200
 
 
+@app.route("/selective-score/<sid>", methods=['GET'])
+def avg_min_selective_score(sid):
+    response = {}
+    connect('high_school')
+    avg = 0
+    if not HighSchool.objects(id=sid):
+        response['error'] = "invalid id in request"
+        return jsonify(response), 400
+    else:
+        for school in HighSchool.objects(id=sid):
+            scores = list(map(float, school.selective_entry_scores.values()))
+            avg = st.mean(scores)
+    return jsonify({'avg_enrollments': int(avg)}), 200
+
+
 @app.route("/compare", methods=['GET'])
 def compare_schools():
     schools = request.args.getlist('school_id')

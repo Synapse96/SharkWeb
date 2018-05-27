@@ -14,7 +14,6 @@ connect(
 
 @app.route("/nearby", methods=['GET'])
 def get_nearby_schools():
-    # TODO: filter by attendance rate and min_selective
     lat = request.args.get("lat")
     long = request.args.get("long")
     radius = float(request.args.get("radius"))
@@ -37,7 +36,6 @@ def get_nearby_schools():
         if school.selective != 'Not Selective' and (
                 'na' in selective_score or float(selective_score) < float(min_selective)):
             continue
-        print(school.name, school.gender, school.students, school.selective_entry_scores)
         loc_dict = school.loc
         loc_dict['id'] = school.id
         locations.append(loc_dict)
