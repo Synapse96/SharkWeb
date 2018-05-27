@@ -16,8 +16,9 @@ connect(
 @app.route('/get', methods=['GET'])
 def get_data():
     response = {}
-    payload = request.args
-    data = requests.get('http://127.0.0.1:5001/nearby', params=payload)
+    query = request.query_string.decode("utf-8")
+    url = 'http://127.0.0.1:5001/nearby?' + query
+    data = requests.get(url)
     try:
         response = data.json()
         return jsonify(response), 200
