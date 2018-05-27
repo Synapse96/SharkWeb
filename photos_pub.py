@@ -9,7 +9,7 @@ app = Flask(__name__)
 connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
 
 
-@app.route("/school/<id>/photos", methods=['GET'])
+@app.route("/photos/<id>", methods=['GET'])
 def get_photos(id):
     response = []
     connect('high_school')
@@ -40,4 +40,4 @@ def get_photos(id):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5002)
