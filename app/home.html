@@ -23,29 +23,43 @@
         /*
         Temporary data array
         */
-        var data = [{
+        var data = [
+            {
                 address: '457 Liverpool Road, Strathfield NSW 2135',
                 title: 'Strathfield South Public school',
                 type: 'gov',
 
             },
-
-//            {
-//                address: '116 Albert Rd, Strathfield NSW 2135',
-//                "title": 'Strathfield Girls High School',
-//                type: 'nongov'
-//            },
-
             {
                 address: 'Francis St, Strathfield NSW 2135',
                 title: 'St Patrick\'s College Strathfield',
                 type: 'nongov'
             },
-
             {
-                address: 'Bridge Rd, Homebush NSW 2140',
-                title: 'Homebush Boys High School',
-                type: 'gov'
+                "_id": 8151,
+                "title": "Homebush Boys High School",
+                "address": "Bridge Rd, Homebush NSW 2140",
+                "suburb": "Homebush ",
+                "postcode": 2140,
+                "students": 1137,
+                "selective": "Not Selective",
+                "gender": "Boys",
+                "attendance_rates": {
+                    "2012": "94.1",
+                    "2014": "95.1",
+                    "2017": "91.9",
+                    "2015": "92.8",
+                    "2016": "93",
+                    "2011": "94.7",
+                    "2013": "94.1"
+                },
+                "selective_entry_scores": {},
+                "enrollments": {
+                    "2016": "1159",
+                    "2015": "1134.544",
+                    "2014": "1155.088",
+                    "2017": "1128"
+                }
             },
             {
                 "_id": 8169,
@@ -72,13 +86,151 @@
                     "2017": "1062.416"
                 }
             }
+
         ];
 
-        function getIcon(type) {
-            return "resources/logo_xs.png"
-        }
-
         function initialize() {
+            var mapStyles = [
+                {
+                    "featureType": "landscape.man_made",
+                    "elementType": "all",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#eeeeee"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.natural.landcover",
+                    "elementType": "all",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#7fb298"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "landscape.natural.terrain",
+                    "elementType": "all",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#a5d3bb"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#444444"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi",
+                    "elementType": "labels.text.stroke",
+                    "stylers": [{
+                            "visibility": "off"
+                        },
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "poi.park",
+                    "elementType": "geometry",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#c5dac3"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#eeeeee"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "geometry.stroke",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#ffffff"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "road.highway",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#444444"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "geometry.fill",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#999999"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "geometry.stroke",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#444444"
+                        }
+                    ]
+                },
+                {
+                    "featureType": "transit",
+                    "elementType": "labels.text.fill",
+                    "stylers": [{
+                        "color": "#444444"
+                    }]
+                },
+                {
+                    "featureType": "water",
+                    "elementType": "all",
+                    "stylers": [{
+                            "visibility": "on"
+                        },
+                        {
+                            "color": "#7e9fd1"
+                        }
+                    ]
+                }
+            ];
             var latlng = new google.maps.LatLng(-33.8724445, 151.0916209);
             var myOptions = {
                 zoom: 14,
@@ -86,6 +238,7 @@
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+            map.set('styles', mapStyles);
 
             geocoder = new google.maps.Geocoder();
 
@@ -98,9 +251,9 @@
                             map: map,
                             position: results[0].geometry.location,
                             title: mapData.title,
-                            icon: getIcon(mapData.type)
+                            icon: "resources/logo_xs.png"
                         });
-                        var contentHtml = "<div style='width:300px;height:200px'><h5>" + mapData.title + "</h5>" + mapData.address + "<br><a href='\/profile.html?id="+mapData._id +"'>Details</a></div>";
+                        var contentHtml = "<div style='width:300px;height:200px'><h5>" + mapData.title + "</h5>" + mapData.address + "<br><a href='\/profile.html?id=" + mapData._id + "'>Details</a></div>";
                         var infowindow = new google.maps.InfoWindow({
                             content: contentHtml
                         });
@@ -191,13 +344,12 @@
 
 </head>
 
-<!--<body onLoad="initialize()">-->
-
 <body>
     <div class="row">
         <div class="col-sm-4 sidebar">
             <nav class="navbar navbar-expand-md bg-dark navbar-dark">
-                <a class="navbar-brand" href="#"><img src="/resources/logo_sm.png" width="50px"/> SchoolCompare</a>
+                <a class="navbar-brand" href="/home.html"><img src="/resources/logo_sm.png" width="50px"/> SchoolCompare</a>
+                <!--
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -208,6 +360,7 @@
                         </li>
                     </ul>
                 </div>
+-->
             </nav>
             <div class="container">
                 <div class="gap"></div>
