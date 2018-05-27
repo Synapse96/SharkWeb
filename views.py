@@ -46,7 +46,7 @@ def get_profile(id):
         response.update(selective_scores_data.json())
         return jsonify(response), 200
     except json.decoder.JSONDecodeError:
-        response["error"] = "invalid arguments in request"
+        response["error"] = json.decoder.JSONDecodeError
         return jsonify(response), 400
 
 
