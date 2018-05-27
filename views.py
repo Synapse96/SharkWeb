@@ -13,8 +13,8 @@ connect(
 )
 
 
-@app.route('/get', methods=['GET'])
-def get_data():
+@app.route('/schools', methods=['GET'])
+def get_schools():
     response = {}
     query = request.query_string.decode("utf-8")
     url = 'http://127.0.0.1:5001/nearby?' + query
@@ -33,6 +33,7 @@ def get_profile(id):
     url_photos = 'http://127.0.0.1:5002/photos/' + id
     url_attendance = 'http://127.0.0.1:5003/attendance/' + id
     url_enrollments = 'http://127.0.0.1:5003/enrollments/' + id
+    url_selective_scores = 'http://127.0.0.1:5003/selective-score/' + id
     try:
         with urllib.request.urlopen(url_school) as school_json:
             school_data = json.load(school_json)
@@ -46,6 +47,9 @@ def get_profile(id):
         with urllib.request.urlopen(url_enrollments) as enrollments_json:
             enrollments_data = json.load(enrollments_json)
             response.update(enrollments_data)
+        with urllib.request.urlopen(url_selective_scores) as selective_scores_json:
+            selective_scores_data = json.load(selective_scores_json)
+            response.update(selective_scores_data)
         return jsonify(response), 200
     except urllib.error.HTTPError:
         response["error"] = "invalid id in request"
