@@ -23,7 +23,7 @@ def get_average_attendance(sid):
         for school in HighSchool.objects(id=sid):
             attendance = list(map(float, school.attendance_rates.values()))
             avg = st.harmonic_mean(attendance)
-    return jsonify({'Avg_attendance': avg}), 200
+    return jsonify({'avg_attendance': avg}), 200
 
 
 @app.route("/enrollments/<sid>", methods=['GET'])
@@ -38,7 +38,7 @@ def get_average_enrollments(sid):
         for school in HighSchool.objects(id=sid):
             enrollments = list(map(float, school.enrollments.values()))
             avg = st.mean(enrollments)
-    return jsonify({'Avg_enrollments': int(avg)}), 200
+    return jsonify({'avg_enrollments': int(avg)}), 200
 
 
 @app.route("/compare", methods=['GET'])
@@ -65,9 +65,9 @@ def compare_schools():
     sorted_enrollments = sorted(average_enrollments.items(), key=op.itemgetter(1), reverse=True)
     sorted_students = sorted(num_students.items(), key=op.itemgetter(1), reverse=True)
 
-    return jsonify({'Attendances': sorted_attendances, 'Enrollments': sorted_enrollments,
-                    'Students': sorted_students}), 200
+    return jsonify({'attendances': sorted_attendances, 'enrollments': sorted_enrollments,
+                    'students': sorted_students}), 200
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5003)
