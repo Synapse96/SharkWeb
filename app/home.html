@@ -377,30 +377,54 @@
                     <p style="font-size:12px;  padding:15px; color: #7e9fd1">Check on all that apply. no checks will result every item available.</p>
                     <div id="form" style="display: inline-block;
    width: 100%;">
-                        <div class="government">
-                            <div class="filtercat">Government</div>
+                        <div class="slidecontainer">
+                            <div class="filtercat">Search Radius (km)</div>
+                            <input type="range" min="5" max="50" value="5" step="1" class="slider" id="mapRadius">
+                            <p><span id="mapRadiusVal">Val:</span></p>
+                        </div>
+                        <div class="gender">
+                            <div class="filtercat">Gender</div>
                             <label class="filters">
                             <span class="label"><input type="checkbox" name="Government" value="gov" />
-                                  <span class="checkmark"></span> Government Schools</span>
+                                  <span class="checkmark"></span>Boys</span>
                             </label>
                             <label class="filters">
                                 <span class="label"><input type="checkbox" name="Non-Government" value="nongov" />
-                                  <span class="checkmark"></span> Non-Government Schools</span>
+                                  <span class="checkmark"></span>Girls</span>
+                            </label>
+                            <label class="filters">
+                                <span class="label"><input type="checkbox" name="Non-Government" value="coed" />
+                                  <span class="checkmark"></span>Co-ed</span>
+                            </label>
+                        </div>
+                        <div class="selectivecat">
+                            <div class="filtercat">School classification</div>
+                            <label class="filters">
+                            <span class="label"><input type="checkbox" name="Government" value="nonsel" />
+                                  <span class="checkmark"></span>Not Selective</span>
+                            </label>
+                            <label class="filters">
+                                <span class="label"><input type="checkbox" name="Non-Government" value="parsel" />
+                                  <span class="checkmark"></span>Partially Selective</span>
+                            </label>
+                            <label class="filters">
+                                <span class="label"><input type="checkbox" name="Non-Government" value="fullsel" />
+                                  <span class="checkmark"></span>Fully Selective</span>
                             </label>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">School Size</div>
-                            <input type="range" min="100" max="1000" value="500" step="50" class="slider" id="schoolSize">
+                            <input type="range" min="0" max="2000" value="500" step="50" class="slider" id="schoolSize">
                             <p><span id="schoolSizeVal">Val:</span></p>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">Attendance Rate</div>
-                            <input type="range" min="80" max="100" value="0" class="slider" id="attendance">
+                            <input type="range" min="75" max="100" value="75" class="slider" id="attendance">
                             <p><span id="attendanceVal">Val:</span>%</p>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">Minimum Selective School score</div>
-                            <input type="range" min="0" max="300" value="200" step="5" class="slider" id="selective">
+                            <input type="range" min="160" max="240" value="160" step="5" class="slider" id="selective">
                             <p><span id="selectiveVal">Val:</span></p>
                         </div>
                         <button type="submit" class="btn btn-outline-primary btn-block">apply</button>
@@ -427,32 +451,47 @@
 
     </script>
     <script>
-        var schoolSizeslider = document.getElementById("schoolSize");
-        var schoolSizeoutput = document.getElementById("schoolSizeVal");
-        schoolSizeoutput.innerHTML = schoolSizeslider.value; // Display the default slider value
-
-        // Update the current slider value (each time you drag the slider handle)
-        schoolSizeslider.oninput = function() {
-            schoolSizeoutput.innerHTML = this.value;
+//        var schoolSizeslider = document.getElementById("schoolSize");
+//        var schoolSizeoutput = document.getElementById("schoolSizeVal");
+//        schoolSizeoutput.innerHTML = schoolSizeslider.value; // Display the default slider value
+//
+//        // Update the current slider value (each time you drag the slider handle)
+//        schoolSizeslider.oninput = function() {
+//            schoolSizeoutput.innerHTML = this.value;
+//        }
+//
+//        var attendanceslider = document.getElementById("attendance");
+//        var attendanceoutput = document.getElementById("attendanceVal");
+//        attendanceoutput.innerHTML = attendanceslider.value; // Display the default slider value
+//
+//        // Update the current slider value (each time you drag the slider handle)
+//        attendanceslider.oninput = function() {
+//            attendanceoutput.innerHTML = this.value;
+//        }
+//
+//        var selectiveslider = document.getElementById("selective");
+//        var selectiveoutput = document.getElementById("selectiveVal");
+//        selectiveoutput.innerHTML = selectiveslider.value; // Display the default slider value
+//
+//        // Update the current slider value (each time you drag the slider handle)
+//        selectiveslider.oninput = function() {
+//            selectiveoutput.innerHTML = this.value;
+//        }
+        
+        function fetchSlider(slider, output){
+            var slider = document.getElementById(slider);
+            var output = document.getElementById(output);
+            output.innerHTML = slider.value;
+            
+            slider.oninput = function(){
+                output.innerHTML = this.value;
+            }
         }
-
-        var attendanceslider = document.getElementById("attendance");
-        var attendanceoutput = document.getElementById("attendanceVal");
-        attendanceoutput.innerHTML = attendanceslider.value; // Display the default slider value
-
-        // Update the current slider value (each time you drag the slider handle)
-        attendanceslider.oninput = function() {
-            attendanceoutput.innerHTML = this.value;
-        }
-
-        var selectiveslider = document.getElementById("selective");
-        var selectiveoutput = document.getElementById("selectiveVal");
-        selectiveoutput.innerHTML = selectiveslider.value; // Display the default slider value
-
-        // Update the current slider value (each time you drag the slider handle)
-        selectiveslider.oninput = function() {
-            selectiveoutput.innerHTML = this.value;
-        }
+        
+        fetchSlider("mapRadius","mapRadiusVal");
+        fetchSldier("schoolSize","schoolSizeVal");
+        fetchSlider("attendance","attendanceVal");
+        fetchSlider("selective","selectiveVal");
 
     </script>
 </body>
