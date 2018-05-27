@@ -53,7 +53,7 @@ def avg_min_selective_score(sid):
         for school in HighSchool.objects(id=sid):
             scores = list(map(float, school.selective_entry_scores.values()))
             avg = st.mean(scores)
-    return jsonify({'avg_enrollments': int(avg)}), 200
+    return jsonify({'avg_min_selective_scores': int(avg)}), 200
 
 
 @app.route("/compare", methods=['GET'])
