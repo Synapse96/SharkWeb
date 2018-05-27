@@ -38,6 +38,7 @@ def get_nearby_schools():
             continue
         loc_dict = school.loc
         loc_dict['id'] = school.id
+        loc_dict['name'] = school.name
         locations.append(loc_dict)
     resp = jsonify(locations)
     return after_request(resp), 200
