@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from mongoengine import connect
+from mongoengine.queryset.visitor import Q
 from models import HighSchool
 
 app = Flask(__name__)
@@ -19,21 +20,24 @@ def get_nearby_schools():
     radius = float(request.args.get("radius"))
     school_size = request.args.get("school_size")
     min_selective = request.args.get("min_selective_score")
-    attendance_rate = request.args.get("attendance_rate")
+    min_attendance = request.args.get("attendance_rate")
+    genders = request.args.getlist("gender")
+    print(genders)
     connect('high_school')
     # get all schools within the radius given
     schools = HighSchool.objects(loc__geo_within_sphere=[(float(long), float(lat)), radius/6371],
-                                 students__gte=int(school_size))
+                                 students__gte=int(school_size), gender__in=genders)
+
     locations = []
     for school in schools:
+        attendance = school.attendance_rates.get('2017')
+        if 'na' in attendance or float(attendance) < float(min_attendance):
+            continue
+        print(school.name, school.gender, school.students)
         loc_dict = school.loc
         loc_dict['id'] = school.id
         locations.append(loc_dict)
-    if len(locations) < 10:
-        resp = jsonify(locations)
-    else:
-        resp = jsonify(locations[0:10])
-
+    resp = jsonify(locations)
     return after_request(resp), 200
 
 
