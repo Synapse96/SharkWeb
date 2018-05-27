@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request
 from mongoengine import connect
 import requests
-import urllib.request
-import urllib.error
 import json
 import json.decoder
 
@@ -29,30 +27,26 @@ def get_schools():
 
 @app.route('/profile/<id>', methods=['GET'])
 def get_profile(id):
+    response = {}
     url_school = 'http://127.0.0.1:5001/school/' + id
     url_photos = 'http://127.0.0.1:5002/photos/' + id
     url_attendance = 'http://127.0.0.1:5003/attendance/' + id
     url_enrollments = 'http://127.0.0.1:5003/enrollments/' + id
     url_selective_scores = 'http://127.0.0.1:5003/selective-score/' + id
+    school_data = requests.get(url_school)
+    photos_data = requests.get(url_photos)
+    attendance_data = requests.get(url_attendance)
+    enrollments_data = requests.get(url_enrollments)
+    selective_scores_data = requests.get(url_selective_scores)
     try:
-        with urllib.request.urlopen(url_school) as school_json:
-            school_data = json.load(school_json)
-            response = school_data
-        with urllib.request.urlopen(url_photos) as photos_json:
-            photos_data = json.load(photos_json)
-            response["photos"] = photos_data
-        with urllib.request.urlopen(url_attendance) as attendance_json:
-            attendance_data = json.load(attendance_json)
-            response.update(attendance_data)
-        with urllib.request.urlopen(url_enrollments) as enrollments_json:
-            enrollments_data = json.load(enrollments_json)
-            response.update(enrollments_data)
-        with urllib.request.urlopen(url_selective_scores) as selective_scores_json:
-            selective_scores_data = json.load(selective_scores_json)
-            response.update(selective_scores_data)
+        response = school_data.json()
+        response["photos"] = photos_data.json()
+        response.update(attendance_data.json())
+        response.update(enrollments_data.json())
+        response.update(selective_scores_data.json())
         return jsonify(response), 200
-    except urllib.error.HTTPError:
-        response["error"] = "invalid id in request"
+    except json.decoder.JSONDecodeError:
+        response["error"] = "invalid arguments in request"
         return jsonify(response), 400
 
 
