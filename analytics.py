@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
 from mongoengine import connect
 from models import HighSchool
-
+import statistics as st
+import operator as op
 
 app = Flask(__name__)
 
@@ -21,8 +22,7 @@ def get_average_attendance(sid):
     else:
         for school in HighSchool.objects(id=sid):
             attendance = list(map(float, school.attendance_rates.values()))
-            print(attendance)
-            avg = calculate_avg(attendance)
+            avg = st.harmonic_mean(attendance)
     return jsonify({'Avg_attendance': avg}), 200
 
 
@@ -37,31 +37,36 @@ def get_average_enrollments(sid):
     else:
         for school in HighSchool.objects(id=sid):
             enrollments = list(map(float, school.enrollments.values()))
-            print(enrollments)
-            avg = calculate_avg(enrollments)
+            avg = st.mean(enrollments)
     return jsonify({'Avg_enrollments': int(avg)}), 200
 
 
 @app.route("/compare", methods=['GET'])
 def compare_schools():
-    schools = request.args.get('school_id')
-    print(schools)
+    schools = request.args.getlist('school_id')
     connect('high_school')
     average_attendances = {}
+    average_enrollments = {}
+    num_students = {}
     for sid in schools:
         for school in HighSchool.objects(id=int(sid)):
-            attendance = list(map(float, school.attendance.values()))
-            average_attendances[sid] = calculate_avg(attendance)
+            # get the avg attendance_rates
+            attendance = list(map(float, school.attendance_rates.values()))
+            average_attendances[school.name] = st.harmonic_mean(attendance)
 
-    return jsonify(average_attendances), 200
+            # get the avg enrolments
+            enrollments = list(map(float, school.enrollments.values()))
+            average_enrollments[school.name] = st.mean(enrollments)
 
+            # get current num. of students
+            num_students[school.name] = int(school.students)
 
-def calculate_avg(l):
-    if len(l) != 0:
-        avg = sum(l)/len(l)
-    else:
-        avg = 0
-    return avg
+    sorted_attendances = sorted(average_attendances.items(), key=op.itemgetter(1), reverse=True)
+    sorted_enrollments = sorted(average_enrollments.items(), key=op.itemgetter(1), reverse=True)
+    sorted_students = sorted(num_students.items(), key=op.itemgetter(1), reverse=True)
+
+    return jsonify({'Attendances': sorted_attendances, 'Enrollments': sorted_enrollments,
+                    'Students': sorted_students}), 200
 
 
 if __name__ == '__main__':
