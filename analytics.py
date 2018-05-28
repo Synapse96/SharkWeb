@@ -65,6 +65,7 @@ def compare_schools():
     average_attendances = {}
     average_enrollments = {}
     num_students = {}
+    average_selective_entry = {}
     for sid in schools:
         for school in HighSchool.objects(id=int(sid)):
             # get the avg attendance_rates
@@ -77,13 +78,17 @@ def compare_schools():
 
             # get current num. of students
             num_students[school.name] = int(school.students)
+            if school.selective != 'Not Selective':
+                scores = list(map(float, school.selective_entry_scores.values()))
+                average_selective_entry = st.mean(scores)
 
     sorted_attendances = sorted(average_attendances.items(), key=op.itemgetter(1), reverse=True)
     sorted_enrollments = sorted(average_enrollments.items(), key=op.itemgetter(1), reverse=True)
     sorted_students = sorted(num_students.items(), key=op.itemgetter(1), reverse=True)
+    sorted_selective = sorted(average_selective_entry.items(), key=op.itemgetter(1), reverse=True)
 
     return jsonify({'attendances': sorted_attendances, 'enrollments': sorted_enrollments,
-                    'students': sorted_students}), 200
+                    'students': sorted_students, 'selective_scores': sorted_selective}), 200
 
 
 if __name__ == '__main__':

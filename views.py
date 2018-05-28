@@ -1,10 +1,12 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from mongoengine import connect
 import requests
 import json
 import json.decoder
 
 app = Flask(__name__)
+CORS(app)
 
 connect(
     host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb'
@@ -22,7 +24,7 @@ def get_schools():
         return after_request(response), 200
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
-        return jsonify(response), 400
+        return after_request(jsonify(response)), 400
 
 
 @app.route('/profile/<id>', methods=['GET'])
@@ -47,7 +49,8 @@ def get_profile(id):
         return jsonify(response), 200
     except json.decoder.JSONDecodeError:
         response["error"] = json.decoder.JSONDecodeError
-        return jsonify(response), 400
+        return after_request(jsonify(response)), 400
+
 
 @app.after_request
 def after_request(response):
@@ -56,6 +59,7 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
+
 
 if __name__ == '__main__':
     app.run(port=5000)
