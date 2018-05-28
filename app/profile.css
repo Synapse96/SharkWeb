@@ -1,0 +1,20 @@
+.gap{
+    height:30px;
+} 
+#picArea{
+    height:500px;
+}
+
+#schoolName{
+    font-size :40px;
+    font-weight: bold;
+}
+
+.specs{
+    padding:20px;
+    box-shadow: 0 5px 5px 2px #ddd;
+    border: thin solid #EEE;
+}
+i{
+    color:#427CD1;
+}

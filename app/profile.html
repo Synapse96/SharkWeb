@@ -1,34 +1,131 @@
 <html>
-<script>
-    let schoolid = new URLSearchParams(document.location.search).get("id")
 
-    fetch("http://127.0.0.1:5000/profile/" + schoolid) // Call the fetch function passing the url of the API as a parameter
-        //jsonify response body
-        .then((resp) => resp.json())
-        //data = response json
-        .then(function(data) {
-            // Your code for handling the data you get from the API
-            //    let result = data.results;
-            console.log(data)
-            const tgt = document.getElementById('here');
-        
-            tgt.innerHTML = JSON.stringify(data,null,4);
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" crossorigin="anonymous" href="http://meta-kage.kakaocdn.net/dn/osa/blog/assets/fonts/Kakao.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/style.css" />
+    <link rel="stylesheet" type="text/css" href="/profile.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-        })
-        .catch(function(error) {
-            alert(error);
-        });
+</head>
 
-    function createNode(element) {
-        return document.createElement(element); // Create the type of element you pass in the parameters
-    }
+<body>
+    <script>
+        let schoolid = new URLSearchParams(document.location.search).get("id")
+        fetch("http://127.0.0.1:5000/profile/" + schoolid) // Call the fetch function passing the url of the API as a parameter
+            //jsonify response body
+            .then((resp) => resp.json())
+            //data = response json
+            .then(function(data) {
+                // Your code for handling the data you get from the API
+                //    let result = data.results;
+                console.log(data)
+                const tgt = document.getElementById('here');
 
-    function append(parent, el) {
-        return parent.appendChild(el); // Append the second parameter(element) to the first one
-    }
+                tgt.innerHTML = JSON.stringify(data, null, 4);
+                document.getElementById("schoolName").innerHTML = data.name;
+                document.getElementById("address").innerHTML = data.street + ", " + data.suburb + data.postcode;
+                document.getElementById("gender").innerHTML = data.gender;
+                document.getElementById("selective").innerHTML = data.selective;
+                document.getElementById("picArea").backgroundImage = 'url(https://maps.googleapis.com/maps/api/place/photo?photoreference=CmRaAAAAuesZkbUXBr5dIXqHruyPEYYfI003ObxL2x0xBqp3t1XoV_0ciJyg2d_Q11JX9Ub6zFSePMo0kFj5Y_gm5eIsWxTv8qs1JSxJE5R_nSX6fPJQ0hyzPS37S_uFsaIojWjeEhBa_itqWMVlWq7b7k_l5Mm_GhQ_hRc6G_j8COJ7ec29CZ7mIpaZRw&sensor=false&maxheight=1600&maxwidth=1600&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y)';
+                document.getElementById("debugPhoto").src = data.photos[0];
+                alert(data.photos[0]);
 
-</script>
-<h1>Detail Profile Page</h1>
-<div id="here">INFO AREA</div>
+                //VISUALIZATION
+                google.charts.load('current', {
+                    packages: ['corechart', 'line']
+                });
+                google.charts.setOnLoadCallback(drawBasic);
+
+                function drawBasic() {
+
+                    var table = new google.visualization.DataTable();
+                    table.addColumn('number', 'X');
+                    table.addColumn('number', 'Rate');
+                    
+                    Object.entries(data.attendance_rates).forEach(([key, value]) => {
+                                                                  console.log(`${key}: ${value}`);
+                                                                  table.addRows([key,value]);
+                    }
+                                                                 );
+
+                    var options = {
+                        hAxis: {
+                            title: 'Year'
+                        },
+                        vAxis: {
+                            title: 'Rate(%)'
+                        }
+                    };
+
+                    var chart = new google.visualization.LineChart(document.getElementById('attRates'));
+
+                    chart.draw(table, options);
+                }
+
+
+
+            })
+            .catch(function(error) {
+                alert(error);
+            });
+
+        function createNode(element) {
+            return document.createElement(element); // Create the type of element you pass in the parameters
+        }
+
+        function append(parent, el) {
+            return parent.appendChild(el); // Append the second parameter(element) to the first one
+        }
+
+    </script>
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <a class="navbar-brand" href="/home.html"><img src="/resources/logo_sm.png" width="50px"/> SchoolCompare</a>
+        <!--
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Home</a>
+                        </li>
+                    </ul>
+                </div>
+-->
+    </nav>
+    <div class="row" id="picArea" style="height:500px; overflow:hidden;">
+        <img id="debugPhoto" />
+    </div>
+    <div class="gap"></div>
+    <div class="row">
+        <div id="schoolName">school name</div>
+    </div>
+    <div class="row">
+        <div class="col-md-4" style="padding-left:20px;">
+            <div class="specs">
+                <div><i class="fas fa-map-signs"></i><span id="address">?</span></div>
+                <div><i class="fas fa-users"></i><span id="gender">gender</span></div>
+                <div><i class="fas fa-graduation-cap"></i><span id="selective">sel</span></div>
+            </div>
+        </div>
+        <div class="col-md-8">
+
+            <h4>Statistics</h4>
+            <div id="attRates"></div>
+            <div id="enrolment"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div>Temp debug area</div>
+        <div id="here"></div>
+    </div>
+</body>
 
 </html>
