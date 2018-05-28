@@ -2,7 +2,7 @@
 <script>
     let schoolid = new URLSearchParams(document.location.search).get("id")
 
-    fetch("http://127.0.0.1:5000/school/" + schoolid) // Call the fetch function passing the url of the API as a parameter
+    fetch("http://127.0.0.1:5000/profile/" + schoolid) // Call the fetch function passing the url of the API as a parameter
         //jsonify response body
         .then((resp) => resp.json())
         //data = response json

@@ -18,8 +18,8 @@ def get_schools():
     url = 'http://127.0.0.1:5001/nearby?' + query
     data = requests.get(url)
     try:
-        response = data.json()
-        return jsonify(response), 200
+        response = jsonify(data.json())
+        return after_request(response), 200
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
         return jsonify(response), 400
@@ -49,6 +49,13 @@ def get_profile(id):
         response["error"] = json.decoder.JSONDecodeError
         return jsonify(response), 400
 
+@app.after_request
+def after_request(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
 
 if __name__ == '__main__':
     app.run(port=5000)

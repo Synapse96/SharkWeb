@@ -10,7 +10,20 @@
         var markers = [];
         var lastinfowindow;
         var locIndex;
-
+        var data = [];
+             function filter() {
+                fetch("http://127.0.0.1:5000/schools?long=151.0916209&lat=-33.8724445&radius=20&school_size=700&attendance_rate=93.5&gender=Coed&min_selective_score=200&category=Fully%20Selective&category=Not%20Selective")
+                    //jsonify response body
+                    .then((resp) => resp.json())
+                    //data = response json
+                    .then(res => window.data = res)
+                    .catch(function(error) {
+                        alert(error);
+                    })
+            };
+        filter();
+        alert(data);
+        $("#here").append("<div>"+data+"hehe</div>");
         //Polyfill function Credit: MDN
         if (!Array.prototype.forEach) {
             Array.prototype.forEach = function(fn, scope) {
@@ -23,24 +36,23 @@
         /*
         Temporary data array
         */
-        var data = [{
-                address: "King St, Newtown ",
-                id: 8530,
-                lat: -33.899534,
-                long: 151.178338,
-                name: "Newtown High School of Performing Arts"
-            },
-            {
-                address: "North Rocks Rd, Carlingford ",
-                id: 8447,
-                lat: -33.765412,
-                long: 151.050764,
-                name: "Carlingford High School"
-            }
-        ];
+        
+
+
+        function createNode(element) {
+            return document.createElement(element); // Create the type of element you pass in the parameters
+        }
+
+        function append(parent, el) {
+            return parent.appendChild(el); // Append the second parameter(element) to the first one
+        }
+
 
         function initialize() {
-            var mapStyles = [{
+           // alert(window.data[0].name);
+            filter();
+            var mapStyles = [
+                {
                     "featureType": "landscape.man_made",
                     "elementType": "all",
                     "stylers": [{
@@ -191,9 +203,10 @@
 
             geocoder = new google.maps.Geocoder();
 
+            alert(window.data.length);
             data.forEach(function(mapData, idx) {
                 geocoder.geocode({
-                    'address': mapData.lat + ", " + mapData.long
+                    'address': mapData.address
                 }, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
                         var marker = new google.maps.Marker({
@@ -224,7 +237,7 @@
                         if (markers.length == data.length) doFilter();
 
                     } else {
-                        //alert("Geocode was not successful for the following reason: " + status);
+                        alert("Geocode was not successful for the following reason: " + status);
                     }
                 });
 
@@ -258,23 +271,17 @@
                     }
                 }
 
-                //what's checked?
-                var checked = $("input[type=checkbox]:checked");
-                var selTypes = [];
-                for (var i = 0, len = checked.length; i < len; i++) {
-                    selTypes.push($(checked[i]).val());
-                }
+               // what's checked?
+                //var checked = $("input[type=checkbox]:checked");
+                //var selTypes = [];
+//                for (var i = 0, len = checked.length; i < len; i++) {
+//                    selTypes.push($(checked[i]).val());
+//                }
                 for (var i = 0, len = data.length; i < len; i++) {
                     var sideDom = "p.loc[data-locid=" + (i + 1) + "]";
-
-                    //Only hide if length != 0
-                    if (checked.length != 0 && selTypes.indexOf(data[i].type) < 0) {
-                        $(sideDom).hide();
-                        markers[locIndex[i + 1]].setVisible(false);
-                    } else {
                         $(sideDom).show();
                         markers[locIndex[i + 1]].setVisible(true);
-                    }
+                    
                 }
             }
 
@@ -296,7 +303,7 @@
 
 <body>
     <div class="row">
-        <div class="col-sm-4 sidebar">
+        <div class="col-sm-4 sidebar" id="here">
             <nav class="navbar navbar-expand-md bg-dark navbar-dark">
                 <a class="navbar-brand" href="/home.html"><img src="/resources/logo_sm.png" width="50px"/> SchoolCompare</a>
                 <!--
@@ -377,7 +384,7 @@
                             <input type="range" min="160" max="240" value="160" step="5" class="slider" id="selective">
                             <p><span id="selectiveVal">Val:</span></p>
                         </div>
-                        <button type="submit" class="btn btn-outline-primary btn-block">apply</button>
+                        <button type="submit" class="btn btn-outline-primary btn-block" onclick="filter()">apply</button>
                         <div class="gap">&ensp;</div>
 
                     </div>
