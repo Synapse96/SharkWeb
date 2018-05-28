@@ -20,12 +20,12 @@ def get_photos(id):
         for school in HighSchool.objects(id=id):
             name = school.name.replace(' ', '%20')
             url_textsearch = 'https://maps.googleapis.com/maps/api/place/textsearch/json?query=' + \
-                  name + '&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y'
+                  name + '&key=AIzaSyBqleXsttoPMyDVWDMQgcYwutB7ENx4icQ'
             with urllib.request.urlopen(url_textsearch) as textsearch_json:
                 textsearch_data = json.load(textsearch_json)
                 place_id = textsearch_data["results"][0]["place_id"]
                 url_details = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' +  \
-                              place_id + '&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y'
+                              place_id + '&key=AIzaSyBqleXsttoPMyDVWDMQgcYwutB7ENx4icQ'
                 with urllib.request.urlopen(url_details) as details_json:
                     details_data = json.load(details_json)
                     if 'photos' in details_data["result"]:
@@ -33,7 +33,7 @@ def get_photos(id):
                             photo_reference = photo["photo_reference"]
                             url_photo = 'https://maps.googleapis.com/maps/api/place/photo?photoreference=' + \
                                         photo_reference + '&sensor=false&maxheight=1600&maxwidth=1600' \
-                                                          '&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y'
+                                                          '&key=AIzaSyBqleXsttoPMyDVWDMQgcYwutB7ENx4icQ'
                             response.append(url_photo)
 
             return jsonify(response), 200
