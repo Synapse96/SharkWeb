@@ -24,7 +24,7 @@ def get_schools():
         return after_request(response), 200
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
-        return after_request(jsonify(response)), 400
+        return jsonify(response), 400
 
 
 @app.route('/profile/<id>', methods=['GET'])
@@ -48,8 +48,8 @@ def get_profile(id):
         response.update(selective_scores_data.json())
         return jsonify(response), 200
     except json.decoder.JSONDecodeError:
-        response["error"] = json.decoder.JSONDecodeError
-        return after_request(jsonify(response)), 400
+        response["error"] = "invalid arguments in request"
+        return jsonify(response), 400
 
 
 @app.after_request
