@@ -33,43 +33,64 @@
                 document.getElementById("address").innerHTML = data.street + ", " + data.suburb + data.postcode;
                 document.getElementById("gender").innerHTML = data.gender;
                 document.getElementById("selective").innerHTML = data.selective;
+            document.getElementById("avgEnr").innerHTML = data.avg_enrollments;
+            document.getElementById("avgAtt").innerHTML = Math.round(data.avg_attendance * 100) / 100;
                 document.getElementById("picArea").backgroundImage = 'url(https://maps.googleapis.com/maps/api/place/photo?photoreference=CmRaAAAAuesZkbUXBr5dIXqHruyPEYYfI003ObxL2x0xBqp3t1XoV_0ciJyg2d_Q11JX9Ub6zFSePMo0kFj5Y_gm5eIsWxTv8qs1JSxJE5R_nSX6fPJQ0hyzPS37S_uFsaIojWjeEhBa_itqWMVlWq7b7k_l5Mm_GhQ_hRc6G_j8COJ7ec29CZ7mIpaZRw&sensor=false&maxheight=1600&maxwidth=1600&key=AIzaSyDsGuKG_rDmC4wfLvSrxsWb7HVLx59bi2Y)';
-                document.getElementById("debugPhoto").src = data.photos[0];
-                alert(data.photos[0]);
+                //document.getElementById("debugPhoto").src = data.photos[0];
+               // alert(data.photos[0]);
 
-                //VISUALIZATION
+                //VISUALIZATION: Attendance
                 google.charts.load('current', {
                     packages: ['corechart', 'line']
                 });
-                google.charts.setOnLoadCallback(drawBasic);
+                google.charts.setOnLoadCallback(drawAttendance);
+                google.charts.setOnLoadCallback(drawEnrolment);
 
-                function drawBasic() {
-
+                function drawAttendance() {
                     var table = new google.visualization.DataTable();
                     table.addColumn('number', 'X');
-                    table.addColumn('number', 'Rate');
-                    
-                    Object.entries(data.attendance_rates).forEach(([key, value]) => {
-                                                                  console.log(`${key}: ${value}`);
-                                                                  table.addRows([key,value]);
-                    }
+                    table.addColumn('number', 'Rate');                    
+                    Object.entries(data.attendance_rates).forEach(([key, value]) => 
+                                                                  table.addRow([parseInt(key),parseFloat(value)])
                                                                  );
-
                     var options = {
+                        title: "Attendance Rate",
+                        legend: { position: 'bottom' },
                         hAxis: {
                             title: 'Year'
                         },
                         vAxis: {
                             title: 'Rate(%)'
-                        }
+                        },
+                        curveType: 'function',
+                        colors: ['#427CD1']
                     };
-
                     var chart = new google.visualization.LineChart(document.getElementById('attRates'));
-
                     chart.draw(table, options);
                 }
-
-
+            
+            function drawEnrolment() {
+                    var table = new google.visualization.DataTable();
+                    table.addColumn('number', 'X');
+                    table.addColumn('number', 'Rate');                    
+                    Object.entries(data.enrollments).forEach(([key, value]) => 
+                                                                  table.addRow([parseInt(key),parseFloat(value)])
+                                                                 );
+                    var options = {
+                        title: "Total Enrolment",
+                        legend: { position: 'bottom' },
+                        hAxis: {
+                            title: 'Year'
+                        },
+                        vAxis: {
+                            title: 'Rate'
+                        },
+                        curveType: 'function',
+                        colors: ['#427CD1']
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('enrolment'));
+                    chart.draw(table, options);
+                }
 
             })
             .catch(function(error) {
@@ -100,15 +121,16 @@
                 </div>
 -->
     </nav>
+    <div class="container">
     <div class="row" id="picArea" style="height:500px; overflow:hidden;">
-        <img id="debugPhoto" />
+        <img id="debugPhoto" style="background-color: #427CD1"/>
     </div>
     <div class="gap"></div>
     <div class="row">
         <div id="schoolName">school name</div>
     </div>
     <div class="row">
-        <div class="col-md-4" style="padding-left:20px;">
+        <div class="col-md-4" style="height: 100%;">
             <div class="specs">
                 <div><i class="fas fa-map-signs"></i><span id="address">?</span></div>
                 <div><i class="fas fa-users"></i><span id="gender">gender</span></div>
@@ -116,12 +138,18 @@
             </div>
         </div>
         <div class="col-md-8">
-
-            <h4>Statistics</h4>
+            <div class="specs">
+            <div>Attendance Rates</div>
+            <div>Average rate: <span id="avgAtt"></span></div>
             <div id="attRates"></div>
+            <div class="gap"></div>
+            <div>Enrolment</div>
+            <div>Average : <span id="avgEnr"></span></div>
             <div id="enrolment"></div>
+                </div>
         </div>
     </div>
+        </div>
     <div class="row">
         <div>Temp debug area</div>
         <div id="here"></div>

@@ -15,6 +15,18 @@
     box-shadow: 0 5px 5px 2px #ddd;
     border: thin solid #EEE;
 }
+
+.row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
+  flex-wrap: wrap;
+}
+.row > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+}
 i{
     color:#427CD1;
 }
