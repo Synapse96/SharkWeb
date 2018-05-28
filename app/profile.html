@@ -28,7 +28,7 @@
                 console.log(data)
                 const tgt = document.getElementById('here');
 
-                tgt.innerHTML = JSON.stringify(data, null, 4);
+                //tgt.innerHTML = JSON.stringify(data, null, 4);
                 document.getElementById("schoolName").innerHTML = data.name;
                 document.getElementById("address").innerHTML = data.street + ", " + data.suburb + data.postcode;
                 document.getElementById("gender").innerHTML = data.gender;
@@ -45,6 +45,15 @@
                 });
                 google.charts.setOnLoadCallback(drawAttendance);
                 google.charts.setOnLoadCallback(drawEnrolment);
+                
+                if(data.selective != "Not Selective"){
+                    document.getElementById("select").innerHTML = "Average Miniumu Selective School Score";
+                    document.getElementById("avgSel").innerHTML = "Average : <span id='avgSel'></span>";
+                        
+                        
+                         document.getElementById("avgSel").innerHTML = data.avg_min_selective_scores;
+                        google.charts.setOnLoadCallback(drawScores);
+                }
 
                 function drawAttendance() {
                     var table = new google.visualization.DataTable();
@@ -91,6 +100,29 @@
                     var chart = new google.visualization.LineChart(document.getElementById('enrolment'));
                     chart.draw(table, options);
                 }
+            
+            function drawScores() {
+                    var table = new google.visualization.DataTable();
+                    table.addColumn('number', 'X');
+                    table.addColumn('number', 'score');                    
+                    Object.entries(data.selective_entry_scores).forEach(([key, value]) => 
+                                                                  table.addRow([parseInt(key),parseFloat(value)])
+                                                                 );
+                    var options = {
+                        title: "Selective School Entry Scores",
+                        legend: { position: 'bottom' },
+                        hAxis: {
+                            title: 'Year'
+                        },
+                        vAxis: {
+                            title: 'Rate'
+                        },
+                        curveType: 'function',
+                        colors: ['#427CD1']
+                    };
+                    var chart = new google.visualization.LineChart(document.getElementById('selScore'));
+                    chart.draw(table, options);
+                }
 
             })
             .catch(function(error) {
@@ -133,7 +165,7 @@
     <div class="row">
         <div class="col-md-4" style="height: 100%;">
             <div class="specs">
-                <div><i class="fas fa-map-signs"></i><span id="address">?</span></div>
+                <div><i class="fas fa-map-signs"></i><span id="address">Address</span></div>
                 <div><i class="fas fa-users"></i><span id="gender">gender</span></div>
                 <div><i class="fas fa-graduation-cap"></i><span id="selective">sel</span></div>
             </div>
@@ -147,14 +179,20 @@
             <div>Enrolment</div>
             <div>Average : <span id="avgEnr"></span></div>
             <div id="enrolment"></div>
+            
+            <div id="select"></div>
+            <div id="selectiveAvg"></div>
+            <div id="selScore"></div>
                 </div>
         </div>
     </div>
         </div>
+<!--
     <div class="row">
         <div>Temp debug area</div>
         <div id="here"></div>
     </div>
+-->
 </body>
 
 </html>

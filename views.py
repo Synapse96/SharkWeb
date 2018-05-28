@@ -20,10 +20,10 @@ def get_schools():
     data = requests.get(url)
     try:
         response = jsonify(data.json())
-        return jsonify(response), 200
+        return response, 200
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
-        return jsonify(response), 400
+        return response, 400
 
 
 @app.route('/profile/<id>', methods=['GET'])
