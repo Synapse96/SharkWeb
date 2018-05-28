@@ -6,11 +6,48 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script type="text/javascript">
+        //serialize string
+        serialize = function(obj) {
+            var str = [];
+            for (var p in obj)
+                if (obj.hasOwnProperty(p)) {
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                }
+            return str.join("&");
+        }
+//        console.log(serialize({
+//            foo: "yo",
+//            bar: "hoho%"
+//        }));
+
         var map;
         var markers = [];
         var lastinfowindow;
         var locIndex;
+        var data = [];
 
+        function filter(query) {
+            alert(serialize(query));
+            fetch("http://127.0.0.1:5000/schools?" + serialize(query))
+                //jsonify response body
+                .then((resp) => resp.json())
+                //data = response json
+                .then(res => window.data = res)
+                .catch(function(error) {
+                    alert(error);
+                })
+        };
+        filter({
+            long: "151.0916209",
+lat : "-33.8724445",
+radius : "20",
+school_size: "700",
+attendance_rate : "93.5",
+gender : "Coed",
+min_selective_score : "200",
+category: "Fully Selective"
+        });
+        alert(data);
         //Polyfill function Credit: MDN
         if (!Array.prototype.forEach) {
             Array.prototype.forEach = function(fn, scope) {
@@ -23,23 +60,21 @@
         /*
         Temporary data array
         */
-        var data = [{
-                address: "King St, Newtown ",
-                id: 8530,
-                lat: -33.899534,
-                long: 151.178338,
-                name: "Newtown High School of Performing Arts"
-            },
-            {
-                address: "North Rocks Rd, Carlingford ",
-                id: 8447,
-                lat: -33.765412,
-                long: 151.050764,
-                name: "Carlingford High School"
-            }
-        ];
+
+
+
+        function createNode(element) {
+            return document.createElement(element); // Create the type of element you pass in the parameters
+        }
+
+        function append(parent, el) {
+            return parent.appendChild(el); // Append the second parameter(element) to the first one
+        }
+
 
         function initialize() {
+            // alert(window.data[0].name);
+            //  filter();
             var mapStyles = [{
                     "featureType": "landscape.man_made",
                     "elementType": "all",
@@ -191,9 +226,10 @@
 
             geocoder = new google.maps.Geocoder();
 
+            //  alert(window.data.length);
             data.forEach(function(mapData, idx) {
                 geocoder.geocode({
-                    'address': mapData.lat + ", " + mapData.long
+                    'address': mapData.address
                 }, function(results, status) {
                     if (status == google.maps.GeocoderStatus.OK) {
                         var marker = new google.maps.Marker({
@@ -224,7 +260,7 @@
                         if (markers.length == data.length) doFilter();
 
                     } else {
-                        //alert("Geocode was not successful for the following reason: " + status);
+                        alert("Geocode was not successful for the following reason: " + status);
                     }
                 });
 
@@ -258,29 +294,60 @@
                     }
                 }
 
-                //what's checked?
-                var checked = $("input[type=checkbox]:checked");
-                var selTypes = [];
-                for (var i = 0, len = checked.length; i < len; i++) {
-                    selTypes.push($(checked[i]).val());
-                }
+                // what's checked?
+                //var checked = $("input[type=checkbox]:checked");
+                //var selTypes = [];
+                //                for (var i = 0, len = checked.length; i < len; i++) {
+                //                    selTypes.push($(checked[i]).val());
+                //                }
                 for (var i = 0, len = data.length; i < len; i++) {
                     var sideDom = "p.loc[data-locid=" + (i + 1) + "]";
+                    $(sideDom).show();
+                    markers[locIndex[i + 1]].setVisible(true);
 
-                    //Only hide if length != 0
-                    if (checked.length != 0 && selTypes.indexOf(data[i].type) < 0) {
-                        $(sideDom).hide();
-                        markers[locIndex[i + 1]].setVisible(false);
-                    } else {
-                        $(sideDom).show();
-                        markers[locIndex[i + 1]].setVisible(true);
-                    }
                 }
             }
 
             $(document).on("click", "input[type=checkbox]", doFilter);
             // $(document).on("change", "input[type=range]",d)
-
+            
+            //check form and sumbit filter
+             function filterwithquery(){
+                 
+                 query = {};
+                  query["gender"] = "Coed";
+                  query["category"] = "Not Selective";
+                 if(document.getElementById("boys").checked){
+                     query["gender"] = "Boys";
+                 }
+                 if(document.getElementById("boys").checked){
+                     query["gender"] = "Girls";
+                 }
+                 if(document.getElementById("boys").checked){
+                     query["gender"] = "Coed";
+                 }
+                 if(document.getElementById("nonsel").checked){
+                     query["category"] = "Not Selective";
+                 }
+                 if(document.getElementById("parsel").checked){
+                     query["selective"] = "Partially Selective";
+                 }
+                 if(document.getElementById("fullsel").checked){
+                     query["selective"] = "Fully Selective";
+                 }
+                 query["radius"] = document.getElementById("mapRadiusVal").innerHTML;
+                 query["school_size"] = document.getElementById("schoolSizeVal").innerHTML;
+                 query["attendance_rate"] = document.getElementById("attendanceVal").innerHTML;
+                 query["min_selective_score"] = document.getElementById("selectiveVal").innerHTML;
+                 //document.getElementById
+                 query["long"] = parseFloat(map.center.lng());
+                 query["lat"] = parseFloat(map.center.lat());
+                 filter(query);
+                 
+             }
+            
+            //$(document).on("click", "#apply", doFilter);
+            document.getElementById("apply").onclick = filterwithquery();
         }
 
     </script>
@@ -296,21 +363,9 @@
 
 <body>
     <div class="row">
-        <div class="col-sm-4 sidebar">
+        <div class="col-sm-4 sidebar" id="here">
             <nav class="navbar navbar-expand-md bg-dark navbar-dark">
                 <a class="navbar-brand" href="/home.html"><img src="/resources/logo_sm.png" width="50px"/> SchoolCompare</a>
-                <!--
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-                <div class="collapse navbar-collapse" id="collapsibleNavbar">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Home</a>
-                        </li>
-                    </ul>
-                </div>
--->
             </nav>
             <div class="container">
                 <div class="gap"></div>
@@ -330,54 +385,54 @@
                         <div class="slidecontainer">
                             <div class="filtercat">Search Radius (km)</div>
                             <input type="range" min="5" max="50" value="5" step="1" class="slider" id="mapRadius">
-                            <p><span id="mapRadiusVal">Val:</span></p>
+                            <p><span id="mapRadiusVal">5</span></p>
                         </div>
                         <div class="gender">
                             <div class="filtercat">Gender</div>
                             <label class="filters">
-                            <span class="label"><input type="checkbox" name="Government" value="gov" />
+                            <span class="label"><input type="checkbox" name="Government" value="gov" id="boys" />
                                   <span class="checkmark"></span>Boys</span>
                             </label>
                             <label class="filters">
-                                <span class="label"><input type="checkbox" name="Non-Government" value="nongov" />
+                                <span class="label"><input type="checkbox" name="Non-Government" value="nongov" id="girls"/>
                                   <span class="checkmark"></span>Girls</span>
                             </label>
                             <label class="filters">
-                                <span class="label"><input type="checkbox" name="Non-Government" value="coed" />
+                                <span class="label"><input type="checkbox" name="Non-Government" value="coed" id="coed"/>
                                   <span class="checkmark"></span>Co-ed</span>
                             </label>
                         </div>
                         <div class="selectivecat">
                             <div class="filtercat">School classification</div>
                             <label class="filters">
-                            <span class="label"><input type="checkbox" name="Government" value="nonsel" />
+                            <span class="label"><input type="checkbox" name="Government" value="nonsel" id="nonsel"/>
                                   <span class="checkmark"></span>Not Selective</span>
                             </label>
                             <label class="filters">
-                                <span class="label"><input type="checkbox" name="Non-Government" value="parsel" />
+                                <span class="label"><input type="checkbox" name="Non-Government" value="parsel" id="parsel"/>
                                   <span class="checkmark"></span>Partially Selective</span>
                             </label>
                             <label class="filters">
-                                <span class="label"><input type="checkbox" name="Non-Government" value="fullsel" />
+                                <span class="label"><input type="checkbox" name="Non-Government" value="fullsel" id="fullsel"/>
                                   <span class="checkmark"></span>Fully Selective</span>
                             </label>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">School Size</div>
                             <input type="range" min="0" max="2000" value="500" step="50" class="slider" id="schoolSize">
-                            <p><span id="schoolSizeVal">Val:</span></p>
+                            <p><span id="schoolSizeVal">500</span></p>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">Attendance Rate</div>
                             <input type="range" min="75" max="100" value="75" class="slider" id="attendance">
-                            <p><span id="attendanceVal">Val:</span>%</p>
+                            <p><span id="attendanceVal">75</span>%</p>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">Minimum Selective School score</div>
                             <input type="range" min="160" max="240" value="160" step="5" class="slider" id="selective">
-                            <p><span id="selectiveVal">Val:</span></p>
+                            <p><span id="selectiveVal">160</span></p>
                         </div>
-                        <button type="submit" class="btn btn-outline-primary btn-block">apply</button>
+                        <button type="submit" id="apply" class="btn btn-outline-primary btn-block" >apply</button>
                         <div class="gap">&ensp;</div>
 
                     </div>

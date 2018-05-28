@@ -313,7 +313,10 @@ category: "Fully Selective"
             
             //check form and sumbit filter
              function filterwithquery(){
+                 
                  query = {};
+                  query["gender"] = "Coed";
+                  query["category"] = "Not Selective";
                  if(document.getElementById("boys").checked){
                      query["gender"] = "Boys";
                  }
@@ -332,14 +335,15 @@ category: "Fully Selective"
                  if(document.getElementById("fullsel").checked){
                      query["selective"] = "Fully Selective";
                  }
-                 query["radius"] = document.getElementById("mapRadiusVal");
-                 query["school_size"] = document.getElementById("schoolSizeVal");
-                 query["attendance_rate"] = document.getElementById("attendanceVal");
-                 query["min_selective_score"] = document.getElementById("selectiveVal");
+                 query["radius"] = document.getElementById("mapRadiusVal").innerHTML;
+                 query["school_size"] = document.getElementById("schoolSizeVal").innerHTML;
+                 query["attendance_rate"] = document.getElementById("attendanceVal").innerHTML;
+                 query["min_selective_score"] = document.getElementById("selectiveVal").innerHTML;
                  //document.getElementById
-                 query["long"] = map.longitude;
-                 query["lat"] = map.latitude;
+                 query["long"] = parseFloat(map.center.lng());
+                 query["lat"] = parseFloat(map.center.lat());
                  filter(query);
+                 
              }
             
             //$(document).on("click", "#apply", doFilter);
@@ -381,7 +385,7 @@ category: "Fully Selective"
                         <div class="slidecontainer">
                             <div class="filtercat">Search Radius (km)</div>
                             <input type="range" min="5" max="50" value="5" step="1" class="slider" id="mapRadius">
-                            <p><span id="mapRadiusVal">Val:</span></p>
+                            <p><span id="mapRadiusVal">5</span></p>
                         </div>
                         <div class="gender">
                             <div class="filtercat">Gender</div>
@@ -416,17 +420,17 @@ category: "Fully Selective"
                         <div class="slidecontainer">
                             <div class="filtercat">School Size</div>
                             <input type="range" min="0" max="2000" value="500" step="50" class="slider" id="schoolSize">
-                            <p><span id="schoolSizeVal">Val:</span></p>
+                            <p><span id="schoolSizeVal">500</span></p>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">Attendance Rate</div>
                             <input type="range" min="75" max="100" value="75" class="slider" id="attendance">
-                            <p><span id="attendanceVal">Val:</span>%</p>
+                            <p><span id="attendanceVal">75</span>%</p>
                         </div>
                         <div class="slidecontainer">
                             <div class="filtercat">Minimum Selective School score</div>
                             <input type="range" min="160" max="240" value="160" step="5" class="slider" id="selective">
-                            <p><span id="selectiveVal">Val:</span></p>
+                            <p><span id="selectiveVal">160</span></p>
                         </div>
                         <button type="submit" id="apply" class="btn btn-outline-primary btn-block" >apply</button>
                         <div class="gap">&ensp;</div>
