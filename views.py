@@ -15,6 +15,7 @@ connect(
 
 @app.route('/schools', methods=['GET'])
 def get_schools():
+    response = {}
     query = request.query_string.decode("utf-8")
     url = 'http://127.0.0.1:5001/nearby?' + query
     data = requests.get(url)
@@ -28,6 +29,7 @@ def get_schools():
 
 @app.route('/profile/<id>', methods=['GET'])
 def get_profile(id):
+    response = {}
     url_school = 'http://127.0.0.1:5001/school/' + id
     url_photos = 'http://127.0.0.1:5002/photos/' + id
     url_attendance = 'http://127.0.0.1:5003/attendance/' + id
@@ -48,8 +50,6 @@ def get_profile(id):
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
         return jsonify(response), 400
-
-
 
 
 if __name__ == '__main__':

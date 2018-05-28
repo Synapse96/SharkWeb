@@ -22,6 +22,8 @@ def get_average_attendance(sid):
     else:
         for school in HighSchool.objects(id=sid):
             attendance = list(map(float, school.attendance_rates.values()))
+            if len(attendance) == 0:
+                return jsonify({}), 200
             avg = st.harmonic_mean(attendance)
     return jsonify({'avg_attendance': avg}), 200
 
@@ -37,6 +39,8 @@ def get_average_enrollments(sid):
     else:
         for school in HighSchool.objects(id=sid):
             enrollments = list(map(float, school.enrollments.values()))
+            if len(enrollments) == 0:
+                return jsonify({}), 200
             avg = st.mean(enrollments)
     return jsonify({'avg_enrollments': int(avg)}), 200
 
@@ -52,7 +56,7 @@ def avg_min_selective_score(sid):
     else:
         for school in HighSchool.objects(id=sid):
             if school.selective == "Not Selective":
-                break
+                return jsonify({}), 200
             scores = list(map(float, school.selective_entry_scores.values()))
             avg = st.mean(scores)
     return jsonify({'avg_min_selective_scores': int(avg)}), 200
