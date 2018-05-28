@@ -20,7 +20,7 @@ def get_schools():
     url = 'http://127.0.0.1:5001/nearby?' + query
     data = requests.get(url)
     try:
-        response = jsonify(data.json())
+        response = data.json()
         return jsonify(response), 200
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
