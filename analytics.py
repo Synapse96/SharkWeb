@@ -86,13 +86,8 @@ def compare_schools():
                 scores = list(map(float, school.selective_entry_scores.values()))
                 average_selective_entry = st.mean(scores)
 
-    sorted_attendances = sorted(average_attendances.items(), key=op.itemgetter(1), reverse=True)
-    sorted_enrollments = sorted(average_enrollments.items(), key=op.itemgetter(1), reverse=True)
-    sorted_students = sorted(num_students.items(), key=op.itemgetter(1), reverse=True)
-    sorted_selective = sorted(average_selective_entry.items(), key=op.itemgetter(1), reverse=True)
-
-    return jsonify({'attendances': sorted_attendances, 'enrollments': sorted_enrollments,
-                    'students': sorted_students, 'selective_scores': sorted_selective}), 200
+    return jsonify({'attendances': average_attendances, 'enrollments': average_enrollments,
+                    'students': num_students, 'selective_scores': average_selective_entry}), 200
 
 
 if __name__ == '__main__':
