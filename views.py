@@ -20,7 +20,6 @@ def get_schools():
     url = 'http://127.0.0.1:5001/nearby?' + query
     data = requests.get(url)
     try:
-
         response = data.json()
         return jsonify(response), 200
     except json.decoder.JSONDecodeError:
@@ -51,6 +50,32 @@ def get_profile(id):
     except json.decoder.JSONDecodeError:
         response["error"] = "invalid arguments in request"
         return jsonify(response), 400
+
+
+@app.route('/compare', methods=['GET'])
+def compare_schools():
+    data_type = request.args.get('data_type')
+    response = {}
+    query = request.query_string.decode("utf-8")
+    print(query, data_type)
+    if data_type == 'enrollments':
+        url = 'http://127.0.0.1:5003/compare-enrollments?' + query
+    elif data_type == 'attendances':
+        url = 'http://127.0.0.1:5003/compare-attendances?' + query
+    elif data_type == 'students':
+        url = 'http://127.0.0.1:5003/compare-students?' + query
+    elif data_type == 'selective-entries':
+        url = 'http://127.0.0.1:5003/compare-selective-entries?' + query
+    else:
+        response['error'] = 'missing argument data_type in request'
+        return jsonify(response), 400
+    data = requests.get(url)
+    try:
+        response = data.json()
+        return jsonify(response), 200
+    except json.decoder.JSONDecodeError:
+        response["error"] = "invalid arguments in request"
+        return response, 400
 
 
 if __name__ == '__main__':
