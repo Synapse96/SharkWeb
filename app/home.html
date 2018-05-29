@@ -117,7 +117,7 @@
         }
 
         var _map;
-        var _center;
+        var _marker;
         var markers = [];
         var lastinfowindow;
         var locIndex;
@@ -390,7 +390,7 @@
 
             var circle = new google.maps.Circle({
                 map: map,
-                radius: 6000,
+                radius: 5500,
                 fillColor: '#AA0000',
                 clickable: false
             });
@@ -419,7 +419,7 @@
             });
 
             $(document).on("click", "#apply", function() {
-                circle.setRadius(($('#mapRadius').val() + 1) * 1000);
+                circle.setRadius(($('#mapRadius').val() * 1000) + 500);
             });
 
             $(document).on("click", ".loc", function() {
