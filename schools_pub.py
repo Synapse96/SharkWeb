@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from mongoengine import connect
-from mongoengine.queryset.visitor import Q
 from models import HighSchool
 
 app = Flask(__name__)
@@ -42,7 +41,7 @@ def get_nearby_schools():
         loc_dict['address'] = school.street + ", " + school.suburb
         locations.append(loc_dict)
     resp = jsonify(locations)
-    return after_request(resp), 200
+    return resp, 200
 
 
 @app.route("/school/<id>", methods=['GET'])
@@ -52,12 +51,12 @@ def get_school_profile(id):
     if not HighSchool.objects(id=id):
         response = "invalid id in request"
         ret = Response(response)
-        return after_request(ret), 400
+        return ret, 400
     else:
         for school in HighSchool.objects(id=id):
             response.append(school.to_json())
             ret = Response(response)
-            return after_request(ret), 200
+            return ret, 200
 
 
 @app.route("/school", methods=['GET'])
@@ -80,16 +79,6 @@ def filter_schools():
         response.append({"error": "invalid arguments in request"})
 
     return jsonify(response), 200
-
-
-# Add CORS header on response header
-@app.after_request
-def after_request(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers.add('Access-Control-Allow-Headers', '*')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
-    response.headers.add('Access-Control-Allow-Credentials', 'true')
-    return response
 
 
 if __name__ == '__main__':

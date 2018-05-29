@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from mongoengine import connect
 from models import HighSchool
 import urllib.request
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 connect(host='mongodb://admin:comp9321@ds229450.mlab.com:29450/sharkweb')
 
@@ -23,6 +25,9 @@ def get_photos(id):
                   name + '&key=AIzaSyBqleXsttoPMyDVWDMQgcYwutB7ENx4icQ'
             with urllib.request.urlopen(url_textsearch) as textsearch_json:
                 textsearch_data = json.load(textsearch_json)
+                if textsearch_data["status"] != "OK":
+                    response = []
+                    return jsonify(response), 200
                 place_id = textsearch_data["results"][0]["place_id"]
                 url_details = 'https://maps.googleapis.com/maps/api/place/details/json?placeid=' +  \
                               place_id + '&key=AIzaSyBqleXsttoPMyDVWDMQgcYwutB7ENx4icQ'

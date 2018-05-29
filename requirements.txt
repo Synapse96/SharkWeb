@@ -3,5 +3,6 @@ xlrd
 werkzeug
 mongoengine
 flask
+flask_cors
 itsdangerous
 requests
