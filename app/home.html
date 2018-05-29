@@ -390,7 +390,7 @@
 
             var circle = new google.maps.Circle({
                 map: map,
-                radius: 5000,
+                radius: 6000,
                 fillColor: '#AA0000',
                 clickable: false
             });
@@ -419,7 +419,7 @@
             });
 
             $(document).on("click", "#apply", function() {
-                circle.setRadius($('#mapRadius').val() * 1000);
+                circle.setRadius(($('#mapRadius').val() + 1) * 1000);
             });
 
             $(document).on("click", ".loc", function() {
