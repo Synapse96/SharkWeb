@@ -184,6 +184,7 @@
                                 'address': mapData.address
                             },
                             function(results, status) {
+                                sleep(100)
                                 if (status == google.maps.GeocoderStatus.OK) {
                                     var marker = new google.maps.Marker({
                                         map: _map,
@@ -214,13 +215,16 @@
                                     //todo
                                     //if (markers.length == data.length) doFilter();
                                 } else {
-                                    //alert("Geocode was not successful for the following reason: " + status);
+                                    alert("Geocode was not successful for the following reason: " + status);
                                 }
                             });
                     });
                 })
         }
-
+        function sleep(milliSeconds) {
+            var startTime = new Date().getTime();
+            while (new Date().getTime() < startTime + milliSeconds);
+        }
         //check form and sumbit filter
         function filterwithquery() {
             query = {};
