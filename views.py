@@ -64,7 +64,7 @@ def compare_schools():
         url = 'http://127.0.0.1:5003/compare-attendances?' + query
     elif data_type == 'students':
         url = 'http://127.0.0.1:5003/compare-students?' + query
-    elif data_type == 'selective-entries':
+    elif data_type == 'selective_entries':
         url = 'http://127.0.0.1:5003/compare-selective-entries?' + query
     else:
         response['error'] = 'missing argument data_type in request'
