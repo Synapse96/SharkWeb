@@ -77,14 +77,14 @@
 
                 function drawAttendance() {
                     var table = new google.visualization.DataTable();
-                    table.addColumn('number', 'X');
+                    table.addColumn('string', 'X');
                     table.addColumn('number', 'Rate');
                     Object.entries(data.attendance_rates).forEach(([key, value]) =>
-                                                                  table.addRow([parseInt(key),parseFloat(value)])
+                                                                  table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Attendance Rate",
-                        legend: { position: 'bottom' },
+                        title: "Attendance Rate per Year",
+                        legend: { position: 'right' },
                         hAxis: {
                             title: 'Year'
                         },
@@ -100,19 +100,19 @@
 
             function drawEnrolment() {
                     var table = new google.visualization.DataTable();
-                    table.addColumn('number', 'X');
+                    table.addColumn('string', 'X');
                     table.addColumn('number', 'Rate');
                     Object.entries(data.enrollments).forEach(([key, value]) =>
-                                                                  table.addRow([parseInt(key),parseFloat(value)])
+                                                                  table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Total Enrolment",
-                        legend: { position: 'bottom' },
+                        title: "Total Enrollments per Year",
+                        legend: { position: 'right' },
                         hAxis: {
                             title: 'Year'
                         },
                         vAxis: {
-                            title: 'Rate'
+                            title: 'Enrollements'
                         },
                         curveType: 'function',
                         colors: ['#427CD1']
@@ -123,19 +123,19 @@
 
             function drawScores() {
                     var table = new google.visualization.DataTable();
-                    table.addColumn('number', 'X');
+                    table.addColumn('string', 'X');
                     table.addColumn('number', 'score');
                     Object.entries(data.selective_entry_scores).forEach(([key, value]) =>
-                                                                  table.addRow([parseInt(key),parseFloat(value)])
+                                                                  table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Selective School Entry Scores",
+                        title: "Selective School Entry Scores per Year",
                         legend: { position: 'bottom' },
                         hAxis: {
                             title: 'Year'
                         },
                         vAxis: {
-                            title: 'Rate'
+                            title: 'Entry Score'
                         },
                         curveType: 'function',
                         colors: ['#427CD1']
