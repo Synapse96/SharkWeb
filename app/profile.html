@@ -69,9 +69,8 @@
                 google.charts.setOnLoadCallback(drawEnrolment);
 
                 if(data.selective != "Not Selective"){
-                    document.getElementById("select").innerHTML = "Average Miniumu Selective School Score";
-                    document.getElementById("avgSel").innerHTML = "Average : <span id='avgSel'></span>";
-                    document.getElementById("avgSel").innerHTML = data.avg_min_selective_scores;
+                    document.getElementById("select").innerHTML = "Average Miniumum Selective Entry Score";
+                    document.getElementById("selAvg").innerHTML = "Average : <span id='avgSel'>" + data.avg_min_selective_scores + "</span>";
                     google.charts.setOnLoadCallback(drawScores);
                 }
 
@@ -210,9 +209,8 @@
                 <div>Enrollments</div>
                 <div>Average: <span id="avgEnr"></span></div>
                 <div id="enrolment"></div>
-
                 <div id="select"></div>
-                <div id="selectiveAvg"></div>
+                <div id="selAvg"></div>
                 <div id="selScore"></div>
 
                 <div class="carousel slide" data-ride="carousel" id="schoolPhotos">
