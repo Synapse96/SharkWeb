@@ -93,7 +93,7 @@
 
                 <!--Filter button TODO: Style-->
                 <button type="button" class="btn btn-outline-info btn-block" data-toggle="collapse" data-target="#filterlist">Edit Filters</button>
-                <button type="button" class="btn btn-outline-secondary btn-block" id="compare" data-toggle="modal" data-target="#myModal">Compare</button>
+                <button type="button" class="btn btn-outline-secondary btn-block" id="compare" data-target="#myModal">Compare</button>
 
                 <!--Location list-->
                 <div id="locs"></div>
@@ -114,14 +114,22 @@
                     </div>
                     <div class="modal-body">
                         <div id="container" style="text-align: center; display: inline-block;">
+                            <div class="charts">
                             <div>Enrollment Rates</div>
                             <div id="enrRank"></div>
+                            </div>
+                            <div class="charts">
                             <div>Attendance Rates</div>
                             <div id="attRank"></div>
+                            </div>
+                            <div class="charts">
                             <div>Students</div>
-                            <div id="stuRank"></div>
+                            <div id="stuRank" style="width:100%;"></div>
+                            </div>
+                                <div class="charts" id="selectiveOnly" style="display: none;">
                             <div>Selective Entry Scores</div>
-                            <div id="selRank"></div>
+                            <div id="selRank" style="width:100%;"></div>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -505,6 +513,8 @@
                     alert("You need to select at least 2 schools to compare.");
                     return;
                 }
+                
+                $("#myModal").modal("show");
                 //array of ID's to pass to fetch
                 var idArray = [];
                 for (var i = 0, len = checked.length; i < len; i++) {
@@ -533,9 +543,8 @@
                                                                   table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Enrolment",
                         hAxis: {
-                            title: 'Year'
+                            title: 'School Name'
                         },
                         vAxis: {
                             title: 'Rate'
@@ -575,9 +584,8 @@
                                                                   table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Enrolment",
                         hAxis: {
-                            title: 'Year'
+                            title: 'School Name'
                         },
                         vAxis: {
                             title: 'Rate'
@@ -617,9 +625,8 @@
                                                                   table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Enrolment",
                         hAxis: {
-                            title: 'Year'
+                            title: 'School Name'
                         },
                         vAxis: {
                             title: 'Rate'
@@ -645,6 +652,9 @@
                     .then(function(data) {
                         console.log(data);
                     
+                        if(data.length != 0){
+                           document.getElementById("selectiveOnly").style.display = 'inline-block';
+                        }
                     
                         google.charts.load('current', {
                             packages: ['corechart']
@@ -660,9 +670,8 @@
                                                                   table.addRow([key,parseFloat(value)])
                                                                  );
                     var options = {
-                        title: "Enrolment",
                         hAxis: {
-                            title: 'Year'
+                            title: 'School Name'
                         },
                         vAxis: {
                             title: 'Rate'
