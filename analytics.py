@@ -63,32 +63,59 @@ def avg_min_selective_score(sid):
     return jsonify({'avg_min_selective_scores': int(avg)}), 200
 
 
-@app.route("/compare", methods=['GET'])
-def compare_schools():
+@app.route("/compare-attendances", methods=['GET'])
+def compare_attendances():
     schools = request.args.getlist('school_id')
     connect('high_school')
     average_attendances = {}
-    average_enrollments = {}
-    num_students = {}
-    average_selective_entry = {}
     for sid in schools:
         for school in HighSchool.objects(id=int(sid)):
             # get the avg attendance_rates
             attendance = list(map(float, school.attendance_rates.values()))
             average_attendances[school.name] = st.harmonic_mean(attendance)
 
+    return jsonify(average_attendances), 200
+
+
+@app.route("/compare-enrollments", methods=['GET'])
+def compare_enrollments():
+    schools = request.args.getlist('school_id')
+    connect('high_school')
+    average_enrollments = {}
+    for sid in schools:
+        for school in HighSchool.objects(id=int(sid)):
             # get the avg enrolments
             enrollments = list(map(float, school.enrollments.values()))
             average_enrollments[school.name] = st.mean(enrollments)
 
+    return jsonify(average_enrollments), 200
+
+
+@app.route("/compare-students", methods=['GET'])
+def compare_students():
+    schools = request.args.getlist('school_id')
+    connect('high_school')
+    num_students = {}
+    for sid in schools:
+        for school in HighSchool.objects(id=int(sid)):
             # get current num. of students
             num_students[school.name] = int(school.students)
+
+    return jsonify(num_students), 200
+
+
+@app.route("/compare-selective-entries", methods=['GET'])
+def compare_selective_entry():
+    schools = request.args.getlist('school_id')
+    connect('high_school')
+    average_selective_entry = {}
+    for sid in schools:
+        for school in HighSchool.objects(id=int(sid)):
             if school.selective != 'Not Selective':
                 scores = list(map(float, school.selective_entry_scores.values()))
                 average_selective_entry[school.name] = st.mean(scores)
 
-    return jsonify({'attendances': average_attendances, 'enrollments': average_enrollments,
-                    'students': num_students, 'selective_scores': average_selective_entry}), 200
+    return jsonify(average_selective_entry), 200
 
 
 if __name__ == '__main__':
